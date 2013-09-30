@@ -1,0 +1,111 @@
+/*
+	Reference Styling for An Interactive Row of Thumbnails
+*/
+@media all {
+  /*
+  	Definitions
+  */
+  /*
+  	Buttons
+  */
+  .catalog-browser {
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    position: relative;
+    height: 400px;
+    width: 100%;
+  }
+  .catalog-browser * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .catalog-browser ul li {
+    display: inline;
+    list-style-type: none;
+  }
+  .catalog-browser .cat-spread {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .catalog-browser .cat-page {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
+  .catalog-browser .cat-page-left {
+    left: 0;
+    right: 50%;
+  }
+  .catalog-browser .cat-page-right {
+    left: 50%;
+    right: 0;
+  }
+  .catalog-browser .cat-page-visible {
+    visibility: visible;
+  }
+  .catalog-browser .cat-page-hidden {
+    visibility: hidden;
+  }
+  .catalog-browser .cat-preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: auto;
+    width: 100%;
+  }
+  .catalog-browser .cat-tile {
+    position: absolute;
+  }
+}
+@media all {
+  button, .button {
+    -webkit-transition-property: background-color;
+    -moz-transition-property: background-color;
+    -o-transition-property: background-color;
+    transition-property: background-color;
+    -webkit-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    transition-timing-function: ease;
+    height: 48px;
+    height: 3rem;
+    line-height: 48px;
+    line-height: 3rem;
+    padding-top: 0px;
+    padding-top: 0rem;
+    padding-right: 16px;
+    padding-right: 1rem;
+    padding-bottom: 0px;
+    padding-bottom: 0rem;
+    padding-left: 16px;
+    padding-left: 1rem;
+    background-color: #ff6a00;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    overflow: visible;
+    text-decoration: none;
+  }
+  button:hover, .button:hover {
+    background-color: #ff9800;
+    color: #fff;
+    text-decoration: none;
+  }
+  button.disabled, button.disabled:hover, .button.disabled, .button.disabled:hover {
+    background-color: #7f7f7f;
+  }
+}

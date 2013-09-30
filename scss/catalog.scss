@@ -1,0 +1,76 @@
+/*
+	Reference Styling for An Interactive Row of Thumbnails
+*/
+
+@media all {
+
+	@import "compass/css3";
+	@import "compass/utilities";
+	@import "definitions";
+	@import "buttons";
+
+	.catalog-browser {
+		display : block;
+		margin : 0;
+		padding : 0;
+		overflow : auto;
+		position : relative;
+		height : 400px;
+		width : 100%;
+		* {
+			@include box-sizing(border-box);
+			margin : 0;
+			padding : 0;
+		}
+		ul {
+			li {
+				display : inline;
+				list-style-type : none;
+			}
+		}
+		.cat-spread {
+			position : absolute;
+			left : 0;
+			top : 0;
+			right : 0;
+			bottom : 0;
+		}
+		.cat-page {
+			position : absolute;
+			top : 0;
+			bottom : 0;
+		}
+		.cat-page-left {
+			left : 0;
+			right : 50%;
+		}
+		.cat-page-right {
+			left : 50%;
+			right : 0;
+		}
+		.cat-page-visible {
+			visibility : visible;
+		}
+		.cat-page-hidden {
+			visibility : hidden;
+		}
+		.cat-preview {
+			position : absolute;
+			left : 0;
+			top : 0;
+			height : auto;
+			width : 100%;
+		}
+		.cat-tile {
+			position : absolute;
+		}
+	}
+
+}
+
+@media (min-width: 1200px) {}
+@media (min-width: 980px) and (max-width: 1199px) {}
+@media (min-width: 768px) and (max-width: 979px) {}
+@media (max-width: 767px) {}
+@media (max-width: 480px) {}
+@media print {}
