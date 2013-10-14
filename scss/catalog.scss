@@ -7,13 +7,14 @@
 	@import "compass/css3";
 	@import "compass/utilities";
 	@import "definitions";
-	@import "buttons";
+	@import "typography";
 
 	.catalog-browser {
 		display : block;
 		margin : 0;
 		padding : 0;
 		overflow : auto;
+		-webkit-overflow-scrolling: touch;
 		position : relative;
 		height : 400px;
 		width : 100%;
@@ -32,8 +33,7 @@
 			position : absolute;
 			left : 0;
 			top : 0;
-			right : 0;
-			bottom : 0;
+			width : 100%;
 		}
 		.cat-page {
 			position : absolute;
