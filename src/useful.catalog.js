@@ -345,6 +345,8 @@
 		this.stay = function (direction) {
 			// change the class name
 			this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-stay cat-page-' + direction;
+			// update the page
+			this.update();
 		};
 		this.show = function () {
 			// change the class name
