@@ -67,8 +67,9 @@
 					// create a new instance of the script
 					var catalog = new useful.Catalog( document.getElementById('catalogExample'), {
 						'imageslice' : './php/imageslice.php?src=../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
-						'cache' : 32,
-						'delay' : 100
+						'cache' : 256,
+						'delay' : 10,
+						'tile' : 128
 					});
 					// start the instance
 					catalog.start();
@@ -77,8 +78,19 @@
 				<!-- Cut above this -->
 				<p>
 					<a href="#" onclick="catalog.spread.zoom(1); return false;">Zoom to 1</a>
-					<a href="#" onclick="catalog.spread.zoom(1.5); return false;">Zoom to 1.5</a>
 					<a href="#" onclick="catalog.spread.zoom(2); return false;">Zoom to 2</a>
+					<a href="#" onclick="catalog.spread.zoom(4); return false;">Zoom to 4</a>
+					<a href="#" onclick="catalog.spread.zoom(8); return false;">Zoom to 8</a>
+				</p>
+				<p>
+					<a href="#" onclick="catalog.spread.open = 0; catalog.spread.zoom(1); return false;">Show page 1</a>
+					<a href="#" onclick="catalog.spread.open = 2; catalog.spread.zoom(1); return false;">Show page 3</a>
+					<a href="#" onclick="catalog.spread.open = 4; catalog.spread.zoom(1); return false;">Show page 5</a>
+					<a href="#" onclick="catalog.spread.open = 6; catalog.spread.zoom(1); return false;">Show page 7</a>
+				</p>
+				<p>
+					<a href="#" onclick="catalog.spread.previous(); return false;">Show previous page</a>
+					<a href="#" onclick="catalog.spread.next(); return false;">Show next page</a>
 				</p>
 			</aside>
 		</section>

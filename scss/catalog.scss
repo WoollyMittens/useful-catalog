@@ -16,7 +16,7 @@
 		overflow : auto;
 		-webkit-overflow-scrolling: touch;
 		position : relative;
-		height : 400px;
+		max-height : 400px;
 		width : 100%;
 		* {
 			@include box-sizing(border-box);
@@ -29,40 +29,109 @@
 				list-style-type : none;
 			}
 		}
+		/*
+			zooming container
+		*/
 		.cat-spread {
 			position : absolute;
 			left : 0;
 			top : 0;
 			width : 100%;
 		}
+		/*
+			pages
+		*/
 		.cat-page {
+			-webkit-transform : rotateY(0deg);
+			transform : rotateY(0deg);
+			-webkit-transform-style	: preserve-3d;
+			transform-style	: preserve-3d;
+			-webkit-perspective : 150;
+			perspective : 150;
+			-webkit-backface-visibility : hidden;
+			backface-visibility : hidden;
 			position : absolute;
 			top : 0;
 			bottom : 0;
+			z-index : 100;
 		}
-		.cat-page-left {
+		.cat-page-odd {
+			-webkit-transform-origin : 100% 50%;
+			transform-origin : 100% 50%;
+			-webkit-perspective-origin : 100% 50%;
+			perspective-origin : 100% 50%;
 			left : 0;
 			right : 50%;
 		}
-		.cat-page-right {
+		.cat-page-even {
+			-webkit-transform-origin : 0% 50%;
+			transform-origin : 0% 50%;
+			-webkit-perspective-origin : 0% 50%;
+			perspective-origin : 0% 50%;
 			left : 50%;
 			right : 0;
 		}
-		.cat-page-visible {
-			visibility : visible;
+		.cat-page-open {
+			-webkit-transform : rotateY(0deg);
+			transform : rotateY(0deg);
+			z-index : 300;
 		}
-		.cat-page-hidden {
-			visibility : hidden;
+		.cat-page-close {
+			-webkit-transform : rotateY(90deg);
+			transform : rotateY(90deg);
+			z-index : 300;
 		}
+		.cat-page-stay {
+			-webkit-transform : rotateY(0deg);
+			transform : rotateY(0deg);
+			z-index : 200;
+		}
+		.cat-page-decreasing {
+			@include transition-property('transform');
+			@include transition-duration('500ms');
+			@include transition-timing-function('ease');
+			&.cat-page-odd {
+				@include transition-delay('500ms');
+			}
+			&.cat-page-even {
+				@include transition-delay('1000ms');
+			}
+			&.cat-page-stay {
+				@include transition-property('none');
+			}
+		}
+		.cat-page-increasing {
+			@include transition-property('transform');
+			@include transition-duration('500ms');
+			@include transition-timing-function('ease');
+			&.cat-page-odd {
+				@include transition-delay('1000ms');
+			}
+			&.cat-page-even {
+				@include transition-delay('500ms');
+			}
+			&.cat-page-stay {
+				@include transition-property('none');
+			}
+		}
+		/*
+			tiles
+		*/
 		.cat-preview {
 			position : absolute;
 			left : 0;
 			top : 0;
-			height : auto;
+			right : 0;
+			bottom : 0;
 			width : 100%;
+			height : 100%;
 		}
 		.cat-tile {
 			position : absolute;
+			img {
+				width : 100%;
+				height : 100%;
+			}
 		}
 	}
 

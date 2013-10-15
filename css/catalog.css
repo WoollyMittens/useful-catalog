@@ -15,8 +15,17 @@
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
-    height: 400px;
+    max-height: 400px;
     width: 100%;
+    /*
+    	zooming container
+    */
+    /*
+    	pages
+    */
+    /*
+    	tiles
+    */
   }
   .catalog-browser * {
     -webkit-box-sizing: border-box;
@@ -36,33 +45,129 @@
     width: 100%;
   }
   .catalog-browser .cat-page {
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-perspective: 150;
+    perspective: 150;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     position: absolute;
     top: 0;
     bottom: 0;
+    z-index: 100;
   }
-  .catalog-browser .cat-page-left {
+  .catalog-browser .cat-page-odd {
+    -webkit-transform-origin: 100% 50%;
+    transform-origin: 100% 50%;
+    -webkit-perspective-origin: 100% 50%;
+    perspective-origin: 100% 50%;
     left: 0;
     right: 50%;
   }
-  .catalog-browser .cat-page-right {
+  .catalog-browser .cat-page-even {
+    -webkit-transform-origin: 0% 50%;
+    transform-origin: 0% 50%;
+    -webkit-perspective-origin: 0% 50%;
+    perspective-origin: 0% 50%;
     left: 50%;
     right: 0;
   }
-  .catalog-browser .cat-page-visible {
-    visibility: visible;
+  .catalog-browser .cat-page-open {
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    z-index: 300;
   }
-  .catalog-browser .cat-page-hidden {
-    visibility: hidden;
+  .catalog-browser .cat-page-close {
+    -webkit-transform: rotateY(90deg);
+    transform: rotateY(90deg);
+    z-index: 300;
+  }
+  .catalog-browser .cat-page-stay {
+    -webkit-transform: rotateY(0deg);
+    transform: rotateY(0deg);
+    z-index: 200;
+  }
+  .catalog-browser .cat-page-decreasing {
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    transition-timing-function: ease;
+  }
+  .catalog-browser .cat-page-decreasing.cat-page-odd {
+    -webkit-transition-delay: 500ms;
+    -moz-transition-delay: 500ms;
+    -o-transition-delay: 500ms;
+    transition-delay: 500ms;
+  }
+  .catalog-browser .cat-page-decreasing.cat-page-even {
+    -webkit-transition-delay: 1000ms;
+    -moz-transition-delay: 1000ms;
+    -o-transition-delay: 1000ms;
+    transition-delay: 1000ms;
+  }
+  .catalog-browser .cat-page-decreasing.cat-page-stay {
+    -webkit-transition-property: none;
+    -moz-transition-property: none;
+    -o-transition-property: none;
+    transition-property: none;
+  }
+  .catalog-browser .cat-page-increasing {
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    transition-timing-function: ease;
+  }
+  .catalog-browser .cat-page-increasing.cat-page-odd {
+    -webkit-transition-delay: 1000ms;
+    -moz-transition-delay: 1000ms;
+    -o-transition-delay: 1000ms;
+    transition-delay: 1000ms;
+  }
+  .catalog-browser .cat-page-increasing.cat-page-even {
+    -webkit-transition-delay: 500ms;
+    -moz-transition-delay: 500ms;
+    -o-transition-delay: 500ms;
+    transition-delay: 500ms;
+  }
+  .catalog-browser .cat-page-increasing.cat-page-stay {
+    -webkit-transition-property: none;
+    -moz-transition-property: none;
+    -o-transition-property: none;
+    transition-property: none;
   }
   .catalog-browser .cat-preview {
     position: absolute;
     left: 0;
     top: 0;
-    height: auto;
+    right: 0;
+    bottom: 0;
     width: 100%;
+    height: 100%;
   }
   .catalog-browser .cat-tile {
     position: absolute;
+  }
+  .catalog-browser .cat-tile img {
+    width: 100%;
+    height: 100%;
   }
 }
 @media all {
