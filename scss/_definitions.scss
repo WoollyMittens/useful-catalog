@@ -80,3 +80,11 @@ $remSize : 12;
 		font-size : $size + 'rem';
 	}
 }
+
+@mixin vendors ($name:'', $value:'') {
+	-o-#{$name} : #{$value};
+	-ms-#{$name} : #{$value};
+	-moz-#{$name} : #{$value};
+	-webkit-#{$name} : #{$value};
+	#{$name} : #{$value};
+}
