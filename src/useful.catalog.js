@@ -48,13 +48,13 @@
 			var sheet = style.sheet || style.styleSheet;
 			// add the custom styles
 			if (sheet.insertRule) {
-				//sheet.insertRule(".catalog-browser button {background-color : " + this.cfg.colorPassive + " !important;}", 0);
-				//sheet.insertRule(".catalog-browser button:hover {background-color : " + this.cfg.colorHover + " !important;}", 0);
-				//sheet.insertRule(".catalog-browser button.disabled {background-color : " + this.cfg.colorDisabled + " !important;}", 0);
+				sheet.insertRule(".catalog-browser button {background-color : " + this.cfg.colorPassive + " !important;}", 0);
+				sheet.insertRule(".catalog-browser button:hover {background-color : " + this.cfg.colorHover + " !important;}", 0);
+				sheet.insertRule(".catalog-browser button.disabled {background-color : " + this.cfg.colorDisabled + " !important;}", 0);
 			} else {
-				//sheet.addRule(".catalog-browser button", "background-color : " + this.cfg.colorPassive + " !important;", 0);
-				//sheet.addRule(".catalog-browser button:hover", "background-color : " + this.cfg.colorHover + " !important;", 0);
-				//sheet.addRule(".catalog-browser button.disabled", "background-color : " + this.cfg.colorDisabled + " !important;", 0);
+				sheet.addRule(".catalog-browser button", "background-color : " + this.cfg.colorPassive + " !important;", 0);
+				sheet.addRule(".catalog-browser button:hover", "background-color : " + this.cfg.colorHover + " !important;", 0);
+				sheet.addRule(".catalog-browser button.disabled", "background-color : " + this.cfg.colorDisabled + " !important;", 0);
 				if (isMsie8) {
 					sheet.addRule(".catalog-browser .cat-page-close", "display : none; }", 0);
 				}
@@ -62,6 +62,7 @@
 		};
 		this.update = function () {
 			// redraw the toolbar
+			this.controls.update();
 			// redraw the spread
 			this.spread.update();
 		};
@@ -87,7 +88,34 @@
 			};
 		};
 		// API calls
-		// zoomTo, zoomBy, moveTo, moveBy, pageTo, pageBy
+		this.zoomTo = function (factor) {};
+		this.zoomBy = function (factor, noAdjust) {
+			var newFactor = this.spread.magnification * factor,
+				maxFactor = this.spread.pages[0].height / this.obj.offsetHeight;
+			// validate the limits
+			if (newFactor < 1) { newFactor = 1; }
+			if (newFactor > maxFactor) { newFactor = maxFactor; }
+			// zoom the spread
+			this.spread.zoom(newFactor, noAdjust);
+		};
+		this.moveTo = function (horizontal, vertical) {};
+		this.moveBy = function (horizontal, vertical) {
+			// if we were given pixels convert to fraction first
+			horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.obj.offsetWidth * 2 : horizontal;
+			vertical = (vertical % 1 === 0) ? vertical / this.spread.obj.offsetWidth * 2 : horizontal;
+			// apply the movement
+			var newHorizontal = this.spread.horizontal - horizontal,
+				newVertical = this.spread.vertical - vertical;
+			// validate the limits
+			if (newHorizontal < 0) { newHorizontal = 0; }
+			if (newHorizontal > 1) { newHorizontal = 1; }
+			if (newVertical < 0) { newVertical = 0; }
+			if (newVertical > 1) { newVertical = 1; }
+			// move the spread
+			this.spread.move(newHorizontal, newVertical);
+		};
+		this.pageTo = function (number) {};
+		this.pageBy = function (difference) {};
 	};
 
 	// provides user interface elements and touch controls
@@ -95,9 +123,74 @@
 		// properties
 		this.parent = parent;
 		this.obj = null;
+		this.noTouch = (!('ontouchstart' in window) && !('onmsgesturechange' in window));
 		// methods
-		this.start = function () {};
+		this.start = function () {
+			// set up the mouse/touch interactions
+			useful.interactions.watch(
+				this.parent.obj,
+				{
+					'wheel' : this.onWheel(),
+					'start' : this.onStart(),
+					'move' : this.onMove(),
+					'end' : this.onEnd()
+				},
+				this.coords
+			);
+		};
+		this.update = function () {};
 		// events
+		this.onWheel = function () {
+			var context = this;
+			return function (coords, event) {
+
+			};
+		};
+		this.onStart = function () {
+			var context = this;
+			return function (coords, event) {
+
+			};
+		};
+		this.onMove = function () {
+			var context = this;
+			return function (coords, event) {
+				// in case of one interaction
+				if (coords[0] && coords[1] && coords[0].move && coords[1].move) {
+					// figure out the movement
+					var pinchX = (coords[0].move.x - coords[1].move.x) / (coords[0].start.x - coords[1].start.x),
+						pinchY = (coords[0].move.y - coords[1].move.y) / (coords[0].start.y - coords[1].start.y),
+						pinch = (pinchX + pinchY + 8) / 10;
+					// assume zooming behaviour
+					context.parent.zoomBy(pinch);
+					// reset the start
+					coords[0].start.x = coords[0].move.x;
+					coords[0].start.y = coords[0].move.y;
+					coords[1].start.x = coords[1].move.x;
+					coords[1].start.y = coords[1].move.y;
+					// cancel the default behaviour
+					event.preventDefault();
+				} else if (coords[0]) {
+					// if touch is not supported
+					if (context.noTouch) {
+						// assume scrolling behaviour
+						context.parent.moveBy(
+							coords[0].move.x - coords[0].start.x,
+							coords[0].move.y - coords[0].start.y
+						);
+						// reset the start
+						coords[0].start.x = coords[0].move.x;
+						coords[0].start.y = coords[0].move.y;
+					}
+				}
+			};
+		};
+		this.onEnd = function () {
+			var context = this;
+			return function () {
+				context.update();
+			};
+		};
 	};
 
 	// a spread contains a front cover, all pages and a rear cover
@@ -234,17 +327,13 @@
 			if (newEven >= 0) { this.pages[newEven].open('decreasing'); this.open = newEven; }
 		};
 		this.zoom = function (magnification) {
-			var context = this;
 			// apply the zoom factor
 			this.obj.style.width = (magnification * 100) + '%';
 			this.obj.style.height = (magnification * 100) + '%';
 			// store the magnification
 			this.magnification = magnification;
 			// re-adjust the position
-			clearTimeout(this.afterZoom);
-			this.afterZoom = setTimeout(function () {
-				context.move();
-			}, context.parent.cfg.delay);
+			this.move();
 		};
 		this.move = function (horizontal, vertical) {
 			var context = this;
@@ -311,6 +400,7 @@
 			// add the preview to the page
 			this.preview.className = 'cat-preview';
 			this.preview.setAttribute('alt', '');
+			this.preview.onmousedown = function () { return false; };
 			this.obj.appendChild(this.preview);
 			// add it to the parent
 			this.parent.obj.appendChild(this.obj);
@@ -453,6 +543,7 @@
 				.replace(/{top}/g, this.top)
 				.replace(/{right}/g, this.right)
 				.replace(/{bottom}/g, this.bottom);
+			this.obj.onmousedown = function () { return false; };
 			this.obj.appendChild(this.img);
 			// add the tile to the page
 			this.parent.obj.appendChild(this.obj);
