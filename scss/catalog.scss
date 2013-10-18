@@ -16,7 +16,6 @@
 		overflow : auto;
 		-webkit-overflow-scrolling: touch;
 		position : relative;
-		max-height : 400px;
 		width : 100%;
 		* {
 			@include box-sizing(border-box);
@@ -125,6 +124,15 @@
 				height : 100%;
 			}
 		}
+		/*
+			configuration overrides
+		*/
+		.cat-split-1 .cat-page-even {
+			left : 0;
+		};
+		.cat-split-2 .cat-page-even {
+			left : 50%;
+		};
 	}
 
 }

@@ -25,10 +25,12 @@
 			// add the loading the indicator
 			this.obj.className += ' cat-busy';
 			// adjust to the aspect ratio the first image
-			this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / 2;
+			this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / this.cfg.split;
 			this.obj.style.height = (this.obj.offsetWidth * this.aspect) + 'px';
 			// build the spread object
 			this.spread = new CatalogSpread(this);
+			this.spread.split = this.cfg.split;
+			this.spread.open = this.cfg.open;
 			this.spread.start();
 			// build the toolbar object
 			this.controls = new CatalogControls(this);
@@ -88,34 +90,66 @@
 			};
 		};
 		// API calls
-		this.zoomTo = function (factor) {};
-		this.zoomBy = function (factor, noAdjust) {
-			var newFactor = this.spread.magnification * factor,
-				maxFactor = this.spread.pages[0].height / this.obj.offsetHeight;
-			// validate the limits
-			if (newFactor < 1) { newFactor = 1; }
-			if (newFactor > maxFactor) { newFactor = maxFactor; }
-			// zoom the spread
-			this.spread.zoom(newFactor, noAdjust);
+		this.zoomBy = function (factor) {
+			// calculate the new factor
+			var newFactor = this.spread.magnification * factor;
+			// zoom to the new factor
+			this.zoomTo(newFactor);
 		};
-		this.moveTo = function (horizontal, vertical) {};
+		this.zoomTo = function (factor) {
+			// determine the max zoom factor based on the original image size
+			var maxFactor = this.spread.pages[0].height / this.obj.offsetHeight;
+			// validate the limits
+			if (factor < 1) { factor = 1; }
+			if (factor > maxFactor) { factor = maxFactor; }
+			// zoom the spread
+			this.spread.zoom(factor);
+		};
 		this.moveBy = function (horizontal, vertical) {
 			// if we were given pixels convert to fraction first
-			horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.obj.offsetWidth * 2 : horizontal;
-			vertical = (vertical % 1 === 0) ? vertical / this.spread.obj.offsetWidth * 2 : horizontal;
+			horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.obj.offsetWidth * this.cfg.split : horizontal;
+			vertical = (vertical % 1 === 0) ? vertical / this.spread.obj.offsetHeight : vertical;
 			// apply the movement
 			var newHorizontal = this.spread.horizontal - horizontal,
 				newVertical = this.spread.vertical - vertical;
-			// validate the limits
-			if (newHorizontal < 0) { newHorizontal = 0; }
-			if (newHorizontal > 1) { newHorizontal = 1; }
-			if (newVertical < 0) { newVertical = 0; }
-			if (newVertical > 1) { newVertical = 1; }
-			// move the spread
-			this.spread.move(newHorizontal, newVertical);
+			// move to the new position
+			this.moveTo(newHorizontal, newVertical);
 		};
-		this.pageTo = function (number) {};
-		this.pageBy = function (difference) {};
+		this.moveTo = function (horizontal, vertical) {
+			// validate the limits
+			if (horizontal < 0) { horizontal = 0; }
+			if (horizontal > 1) { horizontal = 1; }
+			if (vertical < 0) { vertical = 0; }
+			if (vertical > 1) { vertical = 1; }
+			// move the spread
+			this.spread.move(horizontal, vertical);
+		};
+		this.pageBy = function (increment) {
+			// determine how much to increase the page number
+			switch (increment) {
+			// this is the next page
+			case 1 :
+				this.spread.next();
+				break;
+			// this is the previous page
+			case -1 :
+				this.spread.previous();
+				break;
+			// jump directly to any page
+			default :
+				this.pageTo(this.spread.open + increment);
+			}
+		};
+		this.pageTo = function (number) {
+			// get the highest page number
+			var maxNumber = this.spread.pages.length - 1;
+			// validate the page number
+			if (number < 0) { number = 0; }
+			if (number > maxNumber) { number = maxNumber; }
+			// display the page
+			this.spread.open = number;
+			this.spread.zoom(1);
+		};
 	};
 
 	// provides user interface elements and touch controls
@@ -143,19 +177,17 @@
 		this.onWheel = function () {
 			var context = this;
 			return function (coords, event) {
-
+				context.parent.zoomBy(1 + coords.wheel.y / 20);
+				event.preventDefault();
 			};
 		};
 		this.onStart = function () {
-			var context = this;
-			return function (coords, event) {
-
-			};
+			return function () {};
 		};
 		this.onMove = function () {
 			var context = this;
 			return function (coords, event) {
-				// in case of one interaction
+				// in case of two interactions
 				if (coords[0] && coords[1] && coords[0].move && coords[1].move) {
 					// figure out the movement
 					var pinchX = (coords[0].move.x - coords[1].move.x) / (coords[0].start.x - coords[1].start.x),
@@ -170,6 +202,7 @@
 					coords[1].start.y = coords[1].move.y;
 					// cancel the default behaviour
 					event.preventDefault();
+				// else in case of a single interaction
 				} else if (coords[0]) {
 					// if touch is not supported
 					if (context.noTouch) {
@@ -202,6 +235,7 @@
 		this.horizontal = 0.5;
 		this.vertical = 0.5;
 		this.magnification = 1;
+		this.split = 2;
 		this.open = 0;
 		this.area = [0, 0, 1, 1];
 		this.areaEven = [0, 0, 1, 1];
@@ -214,7 +248,7 @@
 		this.start = function () {
 			// build a container for the pages
 			this.obj = document.createElement('div');
-			this.obj.className = 'cat-spread';
+			this.obj.className = 'cat-spread cat-split-' + this.split;
 			// create all the pages
 			var assets = this.parent.obj.getElementsByTagName('a');
 			for (var a = 0, b = assets.length; a < b; a += 1) {
@@ -227,7 +261,7 @@
 				this.pages[a].right = parseFloat(assets[a].getAttribute('data-right') || 1);
 				this.pages[a].bottom = parseFloat(assets[a].getAttribute('data-bottom') || 1);
 				this.pages[a].preview = assets[a].removeChild(assets[a].getElementsByTagName('img')[0]);
-				this.pages[a].bound = (a % 2 === 0) ? 'even' : 'odd';
+				this.pages[a].bound = (a % this.split === 0) ? 'even' : 'odd';
 				this.pages[a].index = a;
 				this.pages[a].start();
 			}
@@ -250,32 +284,34 @@
 			var overscan = 1 - 1 / this.magnification;
 			// define the viewable area
 			this.area = {};
-			this.area.full = {
+			this.area.full = this.area.odd = this.area.even = {
 				'left' : overscan * this.horizontal,
 				'top' : overscan * this.vertical,
 				'right' : 1 - overscan * (1 - this.horizontal),
 				'bottom' : 1 - overscan * (1 - this.vertical)
 			};
-			// define the viewable area for the even and odd side
-			this.area.odd = {
-				'left' : this.area.full.left * 2,
-				'top' : this.area.full.top,
-				'right' : this.area.full.right * 2,
-				'bottom' : this.area.full.bottom
-			};
-			this.area.even = {
-				'left' : this.area.odd.left - 1,
-				'top' : this.area.odd.top,
-				'right' : this.area.odd.right - 1,
-				'bottom' : this.area.odd.bottom
-			};
+			if (this.split === 2) {
+				// define the viewable area for the even and odd side
+				this.area.odd = {
+					'left' : this.area.full.left * 2,
+					'top' : this.area.full.top,
+					'right' : this.area.full.right * 2,
+					'bottom' : this.area.full.bottom
+				};
+				this.area.even = {
+					'left' : this.area.odd.left - 1,
+					'top' : this.area.odd.top,
+					'right' : this.area.odd.right - 1,
+					'bottom' : this.area.odd.bottom
+				};
+			}
 		};
 		this.redraw = function () {
-			var even = this.open - this.open % 2,
+			var even = this.open - this.open % this.split,
 				odd = even - 1;
 			// for all the pages of this spread
 			for (var a = 0, b = this.pages.length; a < b; a += 1) {
-				// if the page is visible
+				// if the page is open
 				if (a === even || a === odd) {
 					// show the page
 					this.pages[a].show();
@@ -287,43 +323,45 @@
 			}
 		};
 		this.next = function () {
-			var oldEven = this.open - this.open % 2,
+			var oldEven = this.open - this.open % this.split,
 				oldOdd = oldEven - 1,
-				newEven = oldEven + 2,
-				newOdd = oldOdd + 2;
+				newEven = oldEven + this.split,
+				newOdd = oldOdd + this.split,
+				pagesLength = this.pages.length;
 			// for all the pages of this spread
-			for (var a = 0, b = this.pages.length; a < b; a += 1) {
+			for (var a = 0, b = pagesLength; a < b; a += 1) {
 				// if these are not the active pages
-				if (a !== oldEven && a !== oldOdd && a !== newEven && a !== newOdd) {
+				if (a < oldOdd || a > newEven) {
 					// hide the page
 					this.pages[a].hide();
 				}
 			}
-			// set the background pages
-			if (oldOdd >= 0) { this.pages[oldOdd].stay('increasing'); }
-			if (newEven < this.pages.length) { this.pages[newEven].stay('increasing'); this.open = newEven; }
-			// animate the foreground pages
+			// update the odd pages
+			if (oldOdd >= 0 && this.pages[oldOdd].bound === 'odd') { this.pages[oldOdd].stay('increasing'); }
+			if (newOdd < pagesLength && this.pages[newOdd].bound === 'odd') { this.pages[newOdd].open('increasing'); }
+			// update the even pages
 			if (oldEven >= 0) { this.pages[oldEven].close('increasing'); }
-			if (newOdd < this.pages.length) { this.pages[newOdd].open('increasing'); }
+			if (newEven < pagesLength) { this.pages[newEven].stay('increasing'); this.open = newEven; }
 		};
 		this.previous = function () {
-			var oldEven = this.open - this.open % 2,
+			var oldEven = this.open - this.open % this.split,
 				oldOdd = oldEven - 1,
-				newEven = oldEven - 2,
-				newOdd = oldOdd - 2;
+				newEven = oldEven - this.split,
+				newOdd = oldOdd - this.split,
+				pagesLength = this.pages.length;
 			// for all the pages of this spread
-			for (var a = 0, b = this.pages.length; a < b; a += 1) {
+			for (var a = 0, b = pagesLength; a < b; a += 1) {
 				// if these are not the active pages
-				if (a !== oldEven && a !== oldOdd && a !== newEven && a !== newOdd) {
+				if (a < newOdd || a > oldEven) {
 					// hide the page
 					this.pages[a].hide();
 				}
 			}
-			// set the background pages
+			// update the odd pages
+			if (oldOdd >= 0 && this.pages[oldOdd].bound === 'odd') { this.pages[oldOdd].close('decreasing'); }
+			if (newOdd >= 0 && this.pages[newOdd].bound === 'odd') { this.pages[newOdd].stay('decreasing'); }
+			// update the even pages
 			if (oldEven >= 0) { this.pages[oldEven].stay('decreasing'); }
-			if (newOdd >= 0) { this.pages[newOdd].stay('decreasing'); }
-			// animate the foreground pages
-			if (oldOdd >= 0) { this.pages[oldOdd].close('decreasing'); }
 			if (newEven >= 0) { this.pages[newEven].open('decreasing'); this.open = newEven; }
 		};
 		this.zoom = function (magnification) {
@@ -487,18 +525,24 @@
 			this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
 		};
 		this.stay = function (direction) {
+			// allow the object to render
+			this.obj.style.display = 'block';
 			// change the class name
 			this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-stay cat-page-' + direction;
 			// update the page
 			this.update();
 		};
 		this.show = function () {
+			// allow the object to render
+			this.obj.style.display = 'block';
 			// change the class name
 			this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-open';
 			// update the page
 			this.update();
 		};
 		this.hide = function () {
+			// if the object is nowhere near the open page, it's safe to stop it from rendering
+			this.obj.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
 			// change the class name
 			this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
 		};

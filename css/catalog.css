@@ -15,7 +15,6 @@
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
-    max-height: 400px;
     width: 100%;
     /*
     	loading indicator
@@ -28,6 +27,9 @@
     */
     /*
     	tiles
+    */
+    /*
+    	configuration overrides
     */
   }
   .catalog-browser * {
@@ -182,6 +184,12 @@
   .catalog-browser .cat-tile img {
     width: 100%;
     height: 100%;
+  }
+  .catalog-browser .cat-split-1 .cat-page-even {
+    left: 0;
+  }
+  .catalog-browser .cat-split-2 .cat-page-even {
+    left: 50%;
   }
 }
 @media all {
