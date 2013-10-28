@@ -13,16 +13,14 @@
 		display : block;
 		margin : 0;
 		padding : 0;
-		overflow : auto;
-		-webkit-overflow-scrolling: touch;
 		position : relative;
 		width : 100%;
 		* {
 			@include box-sizing(border-box);
+		}
+		ul, menu {
 			margin : 0;
 			padding : 0;
-		}
-		ul {
 			li {
 				display : inline;
 				list-style-type : none;
@@ -37,13 +35,84 @@
 			}
 		}
 		/*
+			toolbar
+		*/
+		.cat-toolbar {
+			@include rem('bottom', 2);
+			height : 34px;
+			left : 50%;
+			margin-left : -111px;
+			width : 223px;
+			position : absolute;
+			z-index : 1000;
+			.cat-pagenumber {
+				background-color : $color-passive;
+				border : solid 1px #fff;
+				height : 34px;
+				left : 32px;
+				line-height : 30px;
+				position : absolute;
+				text-align : center;
+				top : 0;
+				width : 100px;
+				input {
+					@include rems('padding', 0, 0.3, 0, 0.3);
+					height : 26px;
+					line-height : 26px;
+					margin : 0;
+					text-align : right;
+					width : 32px;
+				}
+				span {
+					color : #fff;
+					&:before {
+						content : ' / ';
+					}
+				}
+			}
+			> button {
+				background-image : url(../img/catalog.png);
+				border : solid 1px #fff;
+				height : 34px;
+				overflow : hidden;
+				position : absolute;
+				text-indent : 40px;
+				top : 0px;
+				white-space : nowrap;
+				width : 34px;
+			}
+			.cat-page-next {
+				background-position : 100% -64px;
+				right : 0px;
+			}
+			.cat-page-prev {
+				background-position : 0% -64px;
+				left : 0px;
+			}
+			.cat-zoom-in {
+				background-position : 0% -32px;
+				right : 32px;
+			}
+			.cat-zoom-out {
+				background-position : 100% -32px;
+				right : 64px;
+			}
+		}
+		/*
 			zooming container
 		*/
-		.cat-spread {
-			position : absolute;
-			left : 0;
-			top : 0;
+		.cat-wrapper {
+			overflow : auto;
+			position : relative;
+			-webkit-overflow-scrolling: touch;
+			height : 100%;
 			width : 100%;
+			.cat-spread {
+				position : absolute;
+				left : 0;
+				top : 0;
+				width : 100%;
+			}
 		}
 		/*
 			pages
@@ -133,8 +202,26 @@
 		.cat-split-2 .cat-page-even {
 			left : 50%;
 		};
-	}
+		/*
+			interaction lure
 
+		&:after {
+			background : Transparent url(../img/catalog.png) 0% -96px;
+			bottom : 10px;
+			content : '';
+			display : block;
+			height : 32px;
+			position : absolute;
+			right : 10px;
+			visibility : visible;
+			width : 32px;
+			z-index : 1000;
+		}
+		&:hover:after {
+			visibility : hidden;
+		}
+		*/
+	}
 }
 
 @media (min-width: 1200px) {}

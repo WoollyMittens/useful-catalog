@@ -17,7 +17,8 @@
 		this.aspect = null;
 		this.timeout = null;
 		// objects
-		this.controls = null;
+		this.toolbar = null;
+		this.touch = null;
 		this.spread = null;
 		// methods
 		this.start = function () {
@@ -33,8 +34,11 @@
 			this.spread.open = this.cfg.open;
 			this.spread.start();
 			// build the toolbar object
-			this.controls = new CatalogControls(this);
-			this.controls.start();
+			this.toolbar = new CatalogToolbar(this);
+			this.toolbar.start();
+			// start the touch controls
+			this.touch = new CatalogTouch(this);
+			this.touch.start();
 			// restore the aspect ratio after resizes
 			window.addEventListener('resize', this.onResized(), true);
 			// apply the custom styling
@@ -64,7 +68,7 @@
 		};
 		this.update = function () {
 			// redraw the toolbar
-			this.controls.update();
+			this.toolbar.update();
 			// redraw the spread
 			this.spread.update();
 		};
@@ -97,11 +101,9 @@
 			this.zoomTo(newFactor);
 		};
 		this.zoomTo = function (factor) {
-			// determine the max zoom factor based on the original image size
-			var maxFactor = this.spread.pages[0].height / this.obj.offsetHeight;
 			// validate the limits
 			if (factor < 1) { factor = 1; }
-			if (factor > maxFactor) { factor = maxFactor; }
+			if (factor > this.spread.max) { factor = this.spread.max; }
 			// zoom the spread
 			this.spread.zoom(factor);
 		};
@@ -139,6 +141,8 @@
 			default :
 				this.pageTo(this.spread.open + increment);
 			}
+			// update the toolbar
+			this.toolbar.update();
 		};
 		this.pageTo = function (number) {
 			// get the highest page number
@@ -152,8 +156,145 @@
 		};
 	};
 
-	// provides user interface elements and touch controls
-	var CatalogControls = function (parent) {
+	// provides user interface elements
+	var CatalogToolbar = function (parent) {
+		// properties
+		this.parent = parent;
+		this.menu = null;
+		this.elements = {};
+		// methods
+		this.start = function () {
+			// build the navigation elements
+			this.menu = document.createElement('menu');
+			this.menu.className = 'cat-toolbar';
+			// add the page number to the toolbar
+			this.addPageNumber();
+			// add the page controls to the toolbar
+			this.addPageControls();
+			// add the zoom controls to the toolbar
+			this.addZoomControls();
+			// add the menu to the parent element
+			this.parent.obj.appendChild(this.menu);
+		};
+		this.update = function () {
+			// get the spread object
+			var spread = this.parent.spread;
+			// update the page number
+			this.elements.pageNumberInput.value = this.parent.spread.open + 1;
+			this.elements.pageNumberTotal.innerHTML = this.parent.spread.pages.length;
+			// update the page controls
+			this.elements.nextButton.className = (spread.open < spread.pages.length - 1) ? 'cat-page-next': 'cat-page-next disabled';
+			this.elements.prevButton.className = (spread.open > 0) ? 'cat-page-prev': 'cat-page-prev disabled';
+			// update the zoom controls
+			this.elements.zoomInButton.className = (spread.magnification < spread.max) ? 'cat-zoom-in': 'cat-zoom-in disabled';
+			this.elements.zoomOutButton.className = (spread.magnification > 1) ? 'cat-zoom-out': 'cat-zoom-out disabled';
+		};
+		this.addPageNumber = function () {
+			// add a container for the page number controls
+			this.elements.pageNumber = document.createElement('div');
+			this.elements.pageNumber.className = 'cat-pagenumber';
+			// add the page number input field
+			this.elements.pageNumberInput = document.createElement('input');
+			this.elements.pageNumberInput.className = 'cat-pagenumber-input';
+			this.elements.pageNumberInput.setAttribute('type', 'number');
+			this.elements.pageNumberInput.setAttribute('name', 'cat-page');
+			this.elements.pageNumberInput.onchange = this.onNumberChange(this.elements.pageNumberInput);
+			this.elements.pageNumber.appendChild(this.elements.pageNumberInput);
+			// add the total number of pages
+			this.elements.pageNumberTotal = document.createElement('span');
+			this.elements.pageNumberTotal.className = 'cat-pagenumber-total';
+			this.elements.pageNumber.appendChild(this.elements.pageNumberTotal);
+			// add the container to the toolbar
+			this.menu.appendChild(this.elements.pageNumber);
+		};
+		this.addPageControls = function () {
+			// add the "previous page" button
+			this.elements.nextButton = document.createElement('button');
+			this.elements.nextButton.className = 'cat-page-next';
+			this.elements.nextButton.setAttribute('type', 'button');
+			this.elements.nextButton.innerHTML = 'Next page';
+			this.elements.nextButton.onclick = this.onNextPage();
+			this.menu.appendChild(this.elements.nextButton);
+			// add the "next page" button
+			this.elements.prevButton = document.createElement('button');
+			this.elements.prevButton.className = 'cat-page-prev';
+			this.elements.prevButton.setAttribute('type', 'button');
+			this.elements.prevButton.innerHTML = 'Previous page';
+			this.elements.prevButton.onclick = this.onPrevPage();
+			this.menu.appendChild(this.elements.prevButton);
+		};
+		this.addZoomControls = function () {
+			// add the "zoom in" button
+			this.elements.zoomInButton = document.createElement('button');
+			this.elements.zoomInButton.className = 'cat-zoom-in';
+			this.elements.zoomInButton.setAttribute('type', 'button');
+			this.elements.zoomInButton.innerHTML = 'Zoom in';
+			this.elements.zoomInButton.onclick = this.onZoomIn();
+			this.menu.appendChild(this.elements.zoomInButton);
+			// add the "zoom out" button
+			this.elements.zoomOutButton = document.createElement('button');
+			this.elements.zoomOutButton.className = 'cat-zoom-out';
+			this.elements.zoomOutButton.setAttribute('type', 'button');
+			this.elements.zoomOutButton.innerHTML = 'Zoom out';
+			this.elements.zoomOutButton.onclick = this.onZoomOut();
+			this.menu.appendChild(this.elements.zoomOutButton);
+		};
+		// events
+		this.onNumberChange = function (input) {
+			var context = this;
+			return function () {
+				// if the input is a number
+				var number = parseInt(input.value, 10);
+				if (isNaN(number)) {
+					// redraw the elements
+					context.update();
+				// else
+				} else {
+					// change the page count
+					context.parent.pageTo(number - 1);
+				}
+			};
+		};
+		this.onNextPage = function () {
+			var context = this;
+			return function () {
+				// increase the page count
+				context.parent.pageBy(1);
+				// cancel the click
+				return false;
+			};
+		};
+		this.onPrevPage = function () {
+			var context = this;
+			return function () {
+				// increase the page count
+				context.parent.pageBy(-1);
+				// cancel the click
+				return false;
+			};
+		};
+		this.onZoomIn = function () {
+			var context = this;
+			return function () {
+				// increase the zoom factor
+				context.parent.zoomBy(1.1);
+				// cancel the click
+				return false;
+			};
+		};
+		this.onZoomOut = function () {
+			var context = this;
+			return function () {
+				// decrease the zoom factor
+				context.parent.zoomBy(0.9);
+				// cancel the click
+				return false;
+			};
+		};
+	};
+
+	// provides touch controls
+	var CatalogTouch = function (parent) {
 		// properties
 		this.parent = parent;
 		this.obj = null;
@@ -171,8 +312,9 @@
 				},
 				this.coords
 			);
+			// TODO: swipe for page turns
+			// TODO: double tap for zoom in
 		};
-		this.update = function () {};
 		// events
 		this.onWheel = function () {
 			var context = this;
@@ -219,10 +361,7 @@
 			};
 		};
 		this.onEnd = function () {
-			var context = this;
-			return function () {
-				context.update();
-			};
+			return function () {};
 		};
 	};
 
@@ -232,9 +371,11 @@
 		// properties
 		this.parent = parent;
 		this.obj = null;
+		this.wrapper = null;
 		this.horizontal = 0.5;
 		this.vertical = 0.5;
 		this.magnification = 1;
+		this.max = 1.1;
 		this.split = 2;
 		this.open = 0;
 		this.area = [0, 0, 1, 1];
@@ -249,6 +390,9 @@
 			// build a container for the pages
 			this.obj = document.createElement('div');
 			this.obj.className = 'cat-spread cat-split-' + this.split;
+			// build a wrapper for the container
+			this.wrapper = document.createElement('div');
+			this.wrapper.className = 'cat-wrapper';
 			// create all the pages
 			var assets = this.parent.obj.getElementsByTagName('a');
 			for (var a = 0, b = assets.length; a < b; a += 1) {
@@ -268,7 +412,8 @@
 			// clear the parent
 			this.parent.obj.innerHTML = '';
 			// add the container to the parent
-			this.parent.obj.appendChild(this.obj);
+			this.wrapper.appendChild(this.obj);
+			this.parent.obj.appendChild(this.wrapper);
 			// keep track of scrolling
 			this.parent.obj.addEventListener('scroll', this.onMove(), true);
 			// apply the starting settings
@@ -282,6 +427,7 @@
 		};
 		this.recalc = function () {
 			var overscan = 1 - 1 / this.magnification;
+			this.max = this.pages[0].height / this.wrapper.offsetHeight;
 			// define the viewable area
 			this.area = {};
 			this.area.full = this.area.odd = this.area.even = {
@@ -379,15 +525,15 @@
 			horizontal = horizontal || this.horizontal;
 			vertical = vertical || this.vertical;
 			// set the position of the spread
-			this.parent.obj.scrollLeft = horizontal * (this.obj.offsetWidth - this.parent.obj.offsetWidth);
-			this.parent.obj.scrollTop = vertical * (this.obj.offsetHeight - this.parent.obj.offsetHeight);
+			this.wrapper.scrollLeft = horizontal * (this.obj.offsetWidth - this.parent.obj.offsetWidth);
+			this.wrapper.scrollTop = vertical * (this.obj.offsetHeight - this.parent.obj.offsetHeight);
 			// store the position
 			this.horizontal = horizontal;
 			this.vertical = vertical;
 			// ask the spread to update
 			clearTimeout(this.afterMove);
 			this.afterMove = setTimeout(function () {
-				context.update();
+				context.parent.update();
 			}, context.parent.cfg.delay);
 		};
 		// events
@@ -398,8 +544,8 @@
 				clearTimeout(context.timeout);
 				context.timeout = setTimeout(function () {
 					// note the new position
-					var horizontal = context.parent.obj.scrollLeft / (context.obj.offsetWidth - context.parent.obj.offsetWidth),
-						vertical = context.parent.obj.scrollTop / (context.obj.offsetHeight - context.parent.obj.offsetHeight);
+					var horizontal = context.wrapper.scrollLeft / (context.obj.offsetWidth - context.wrapper.offsetWidth),
+						vertical = context.wrapper.scrollTop / (context.obj.offsetHeight - context.wrapper.offsetHeight);
 					// validate and store the new position
 					context.horizontal = (isNaN(horizontal)) ? 0.5 : horizontal;
 					context.vertical = (isNaN(vertical)) ? 0.5 : vertical;
