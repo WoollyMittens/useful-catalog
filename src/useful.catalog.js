@@ -69,6 +69,8 @@
 		this.update = function () {
 			// redraw the toolbar
 			this.toolbar.update();
+			// reset the touch controls
+			this.touch.update();
 			// redraw the spread
 			this.spread.update();
 		};
@@ -198,7 +200,7 @@
 			this.elements.pageNumberInput.className = 'cat-pagenumber-input';
 			this.elements.pageNumberInput.setAttribute('type', 'number');
 			this.elements.pageNumberInput.setAttribute('name', 'cat-page');
-			this.elements.pageNumberInput.onchange = this.onNumberChange(this.elements.pageNumberInput);
+			this.elements.pageNumberInput.addEventListener('change', this.onNumberChange(this.elements.pageNumberInput));
 			this.elements.pageNumber.appendChild(this.elements.pageNumberInput);
 			// add the total number of pages
 			this.elements.pageNumberTotal = document.createElement('span');
@@ -213,14 +215,14 @@
 			this.elements.nextButton.className = 'cat-page-next';
 			this.elements.nextButton.setAttribute('type', 'button');
 			this.elements.nextButton.innerHTML = 'Next page';
-			this.elements.nextButton.onclick = this.onNextPage();
+			this.elements.nextButton.addEventListener('click', this.onNextPage());
 			this.menu.appendChild(this.elements.nextButton);
 			// add the "next page" button
 			this.elements.prevButton = document.createElement('button');
 			this.elements.prevButton.className = 'cat-page-prev';
 			this.elements.prevButton.setAttribute('type', 'button');
 			this.elements.prevButton.innerHTML = 'Previous page';
-			this.elements.prevButton.onclick = this.onPrevPage();
+			this.elements.prevButton.addEventListener('click', this.onPrevPage());
 			this.menu.appendChild(this.elements.prevButton);
 		};
 		this.addZoomControls = function () {
@@ -229,14 +231,20 @@
 			this.elements.zoomInButton.className = 'cat-zoom-in';
 			this.elements.zoomInButton.setAttribute('type', 'button');
 			this.elements.zoomInButton.innerHTML = 'Zoom in';
-			this.elements.zoomInButton.onclick = this.onZoomIn();
+			this.elements.zoomInButton.addEventListener('mousedown', this.onZoomIn());
+			this.elements.zoomInButton.addEventListener('mouseup', this.onZoomInEnd());
+			this.elements.zoomInButton.addEventListener('touchstart', this.onZoomIn());
+			this.elements.zoomInButton.addEventListener('touchend', this.onZoomInEnd());
 			this.menu.appendChild(this.elements.zoomInButton);
 			// add the "zoom out" button
 			this.elements.zoomOutButton = document.createElement('button');
 			this.elements.zoomOutButton.className = 'cat-zoom-out';
 			this.elements.zoomOutButton.setAttribute('type', 'button');
 			this.elements.zoomOutButton.innerHTML = 'Zoom out';
-			this.elements.zoomOutButton.onclick = this.onZoomOut();
+			this.elements.zoomOutButton.addEventListener('mousedown', this.onZoomOut());
+			this.elements.zoomOutButton.addEventListener('mouseup', this.onZoomOutEnd());
+			this.elements.zoomOutButton.addEventListener('touchstart', this.onZoomOut());
+			this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd());
 			this.menu.appendChild(this.elements.zoomOutButton);
 		};
 		// events
@@ -257,111 +265,125 @@
 		};
 		this.onNextPage = function () {
 			var context = this;
-			return function () {
+			return function (event) {
 				// increase the page count
 				context.parent.pageBy(1);
 				// cancel the click
-				return false;
+				event.preventDefault();
 			};
 		};
 		this.onPrevPage = function () {
 			var context = this;
-			return function () {
+			return function (event) {
 				// increase the page count
 				context.parent.pageBy(-1);
 				// cancel the click
-				return false;
+				event.preventDefault();
 			};
 		};
 		this.onZoomIn = function () {
 			var context = this;
-			return function () {
-				// increase the zoom factor
-				context.parent.zoomBy(1.1);
+			return function (event) {
+				// repeat the action (faster than the redraw delay)
+				context.zoomInRepeat = setInterval(function () {
+					// increase the zoom factor
+					context.parent.zoomBy(1.1);
+				}, Math.round(context.parent.cfg.delay * 0.75));
 				// cancel the click
-				return false;
+				event.preventDefault();
+			};
+		};
+		this.onZoomInEnd = function () {
+			var context = this;
+			return function (event) {
+				// cancel the repeat
+				clearInterval(context.zoomInRepeat);
+				// cancel the click
+				event.preventDefault();
 			};
 		};
 		this.onZoomOut = function () {
 			var context = this;
-			return function () {
-				// decrease the zoom factor
-				context.parent.zoomBy(0.9);
+			return function (event) {
+				// repeat the action (faster than the redraw delay)
+				context.zoomOutRepeat = setInterval(function () {
+					// decrease the zoom factor
+					context.parent.zoomBy(0.9);
+				}, Math.round(context.parent.cfg.delay * 0.75));
 				// cancel the click
-				return false;
+				event.preventDefault();
+			};
+		};
+		this.onZoomOutEnd = function () {
+			var context = this;
+			return function (event) {
+				// cancel the repeat
+				clearInterval(context.zoomOutRepeat);
+				// cancel the click
+				event.preventDefault();
 			};
 		};
 	};
-
 	// provides touch controls
 	var CatalogTouch = function (parent) {
 		// properties
 		this.parent = parent;
 		this.obj = null;
-		this.noTouch = (!('ontouchstart' in window) && !('onmsgesturechange' in window));
+		this.hasTouch = (('ontouchstart' in window) || ('onmsgesturechange' in window));
 		// methods
 		this.start = function () {
-			// set up the mouse/touch interactions
-			useful.interactions.watch(
-				this.parent.obj,
-				{
-					'wheel' : this.onWheel(),
-					'start' : this.onStart(),
-					'move' : this.onMove(),
-					'end' : this.onEnd()
-				},
-				this.coords
-			);
-			// TODO: swipe for page turns
-			// TODO: double tap for zoom in
+			// start touch controls
+			this.gestures = new useful.Gestures(this.parent.obj, {
+				'threshold' : 100,
+				'increment' : 0.1,
+				'swipeLeft' : this.onSwipeLeft(),
+				'swipeRight' : this.onSwipeRight(),
+				'drag' : (!this.hasTouch) ? this.onDrag() : function () {},
+				'pinch' : this.onPinch()
+			});
+			this.gestures.start();
+			// TODO: double tap for zoom in / out
+		};
+		this.update = function () {
+			// if touch is available
+			if (this.hasTouch && this.parent.spread.magnification > 1) {
+				this.gestures.enableDefaultTouch();
+			} else {
+				this.gestures.disableDefaultTouch();
+			}
 		};
 		// events
-		this.onWheel = function () {
+		this.onSwipeLeft = function () {
 			var context = this;
-			return function (coords, event) {
-				context.parent.zoomBy(1 + coords.wheel.y / 20);
-				event.preventDefault();
-			};
-		};
-		this.onStart = function () {
-			return function () {};
-		};
-		this.onMove = function () {
-			var context = this;
-			return function (coords, event) {
-				// in case of two interactions
-				if (coords[0] && coords[1] && coords[0].move && coords[1].move) {
-					// figure out the movement
-					var pinchX = (coords[0].move.x - coords[1].move.x) / (coords[0].start.x - coords[1].start.x),
-						pinchY = (coords[0].move.y - coords[1].move.y) / (coords[0].start.y - coords[1].start.y),
-						pinch = (pinchX + pinchY + 8) / 10;
-					// assume zooming behaviour
-					context.parent.zoomBy(pinch);
-					// reset the start
-					coords[0].start.x = coords[0].move.x;
-					coords[0].start.y = coords[0].move.y;
-					coords[1].start.x = coords[1].move.x;
-					coords[1].start.y = coords[1].move.y;
-					// cancel the default behaviour
-					event.preventDefault();
-				// else in case of a single interaction
-				} else if (coords[0]) {
-					// if touch is not supported
-					if (context.noTouch) {
-						// assume scrolling behaviour
-						context.parent.moveBy(
-							coords[0].move.x - coords[0].start.x,
-							coords[0].move.y - coords[0].start.y
-						);
-						// reset the start
-						coords[0].start.x = coords[0].move.x;
-						coords[0].start.y = coords[0].move.y;
-					}
+			return function () {
+				// if the zoom is 1, turn to the previous page
+				if (context.parent.spread.magnification === 1) {
+					context.parent.pageBy(1);
 				}
 			};
 		};
-		this.onEnd = function () {
-			return function () {};
+		this.onSwipeRight = function () {
+			var context = this;
+			return function () {
+				// if the zoom is 1, turn to the next page
+				if (context.parent.spread.magnification === 1) {
+					context.parent.pageBy(-1);
+				}
+			};
+		};
+		this.onDrag = function () {
+			var context = this;
+			return function (x, y, horizontal, vertical) {
+				// handle click and drag scrolling for mice
+				context.parent.moveBy(horizontal, vertical);
+			};
+		};
+		this.onPinch = function () {
+			var context = this;
+			return function (x, y, scale) {
+				// zoom in or out
+				context.parent.zoomBy(1 + scale);
+			};
 		};
 	};
 
