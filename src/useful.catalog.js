@@ -48,7 +48,7 @@
 			// create a custom stylesheet
 			var style = document.createElement("style");
 			var isWebkit = new RegExp('webkit', 'gi');
-			var isMsie8 = new RegExp('msie8', 'gi');
+			var isMsie8 = new RegExp('msie 8', 'gi');
 			if (isWebkit.test(navigator.UserAgent)) { style.appendChild(document.createTextNode("")); }
 			document.body.appendChild(style);
 			var sheet = style.sheet || style.styleSheet;
@@ -61,8 +61,11 @@
 				sheet.addRule(".catalog-browser button", "background-color : " + this.cfg.colorPassive + " !important;", 0);
 				sheet.addRule(".catalog-browser button:hover", "background-color : " + this.cfg.colorHover + " !important;", 0);
 				sheet.addRule(".catalog-browser button.disabled", "background-color : " + this.cfg.colorDisabled + " !important;", 0);
-				if (isMsie8) {
-					sheet.addRule(".catalog-browser .cat-page-close", "display : none; }", 0);
+				if (isMsie8.test(navigator.userAgent)) {
+					sheet.addRule(".catalog-browser .cat-page", "display : none;", 0);
+					sheet.addRule(".catalog-browser .cat-page-open", "display : block !important;", 0);
+					sheet.addRule(".catalog-browser .cat-page-close", "display : none !important;", 0);
+					sheet.addRule(".catalog-browser .cat-page-stay", "display : block !important;", 0);
 				}
 			}
 		};
@@ -215,14 +218,16 @@
 			this.elements.nextButton.className = 'cat-page-next';
 			this.elements.nextButton.setAttribute('type', 'button');
 			this.elements.nextButton.innerHTML = 'Next page';
-			this.elements.nextButton.addEventListener('click', this.onNextPage());
+			this.elements.nextButton.addEventListener('mousedown', this.onNextPage());
+			this.elements.nextButton.addEventListener('touchstart', this.onNextPage());
 			this.menu.appendChild(this.elements.nextButton);
 			// add the "next page" button
 			this.elements.prevButton = document.createElement('button');
 			this.elements.prevButton.className = 'cat-page-prev';
 			this.elements.prevButton.setAttribute('type', 'button');
 			this.elements.prevButton.innerHTML = 'Previous page';
-			this.elements.prevButton.addEventListener('click', this.onPrevPage());
+			this.elements.prevButton.addEventListener('mousedown', this.onPrevPage());
+			this.elements.prevButton.addEventListener('touchstart', this.onPrevPage());
 			this.menu.appendChild(this.elements.prevButton);
 		};
 		this.addZoomControls = function () {
@@ -405,6 +410,7 @@
 		this.areaOdd = [0, 0, 1, 1];
 		this.timeout = null;
 		this.tilesCount = 0;
+		this.busy = false;
 		// objects
 		this.pages = [];
 		// methods
@@ -475,7 +481,7 @@
 			}
 		};
 		this.redraw = function () {
-			var even = this.open - this.open % this.split,
+			var even = this.open + this.open % this.split,
 				odd = even - 1;
 			// for all the pages of this spread
 			for (var a = 0, b = this.pages.length; a < b; a += 1) {
@@ -560,7 +566,7 @@
 			clearTimeout(this.afterMove);
 			this.afterMove = setTimeout(function () {
 				context.parent.update();
-			}, context.parent.cfg.delay);
+			}, context.parent.cfg.duration);
 		};
 		// events
 		this.onMove = function () {
