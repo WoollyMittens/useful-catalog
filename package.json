@@ -1,5 +1,5 @@
 {
-  "name": "useful-catalog",
+  "name": "useful-aspectratio",
   "version": "0.0.0",
   "devDependencies": {
     "grunt": "",
@@ -8,6 +8,8 @@
     "grunt-contrib-uglify": "",
     "grunt-contrib-concat": "",
     "grunt-contrib-jshint": "",
+    "grunt-contrib-copy": "",
+    "grunt-contrib-connect": "",
     "sass": "",
     "compass": ""
   }
