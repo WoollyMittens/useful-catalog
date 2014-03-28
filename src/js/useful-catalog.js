@@ -43,6 +43,8 @@
 			window.addEventListener('resize', this.onResized(), true);
 			// apply the custom styling
 			window.addEventListener('load', this.onLoaded(), true);
+			// disable the start function so it can't be started twice
+			this.start = function () {};
 		};
 		this.styling = function () {
 			// create a custom stylesheet
@@ -159,6 +161,8 @@
 			this.spread.open = number + number % this.spread.split;
 			this.spread.zoom(1);
 		};
+		// go
+		this.start();
 	};
 
 	// provides user interface elements
@@ -346,7 +350,6 @@
 				'drag' : (!this.hasTouch) ? this.onDrag() : function () {},
 				'pinch' : this.onPinch()
 			});
-			this.gestures.start();
 			// TODO: double tap for zoom in / out
 		};
 		this.update = function () {

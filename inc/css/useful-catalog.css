@@ -6,8 +6,36 @@
   	Definitions
   */
   /*
+  	Constants
+  */
+  /*
+  	Hides text in the margin
+  */
+  /*
+  	Turns a button into an icon
+  */
+  /*
+  	Centres a graphic inside an icon
+  */
+  /*
+  	Offers both the pixel and rem value of a single property
+  */
+  /*
+  	Offers both the pixel and rem values of a shorthand property
+  */
+  /*
+  	Offers the text size as both the pixel and rem value
+  */
+  /*
+  	Adds vendor prefixed to a property
+  */
+  /*
+  	Applies the "clearfix" hack to a container with floating content
+  */
+  /*
   	Typography
   */
+  /* line 12, ../../src/scss/useful-catalog.scss */
   .catalog-browser {
     display: block;
     margin: 0;
@@ -52,22 +80,27 @@
     		}
     		*/
   }
+  /* line 18, ../../src/scss/useful-catalog.scss */
   .catalog-browser * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
   }
+  /* line 21, ../../src/scss/useful-catalog.scss */
   .catalog-browser ul, .catalog-browser menu {
     margin: 0;
     padding: 0;
   }
+  /* line 24, ../../src/scss/useful-catalog.scss */
   .catalog-browser ul li, .catalog-browser menu li {
     display: inline;
     list-style-type: none;
   }
+  /* line 33, ../../src/scss/useful-catalog.scss */
   .catalog-browser.cat-busy * {
     visibility: hidden;
   }
+  /* line 40, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar {
     bottom: 24px;
     bottom: 2rem;
@@ -78,6 +111,7 @@
     position: absolute;
     z-index: 1000;
   }
+  /* line 48, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-pagenumber {
     background-color: #ff6a00;
     border: solid 1px #fff;
@@ -89,6 +123,7 @@
     top: 0;
     width: 100px;
   }
+  /* line 58, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-pagenumber input {
     padding-top: 0px;
     padding-top: 0rem;
@@ -104,12 +139,15 @@
     text-align: right;
     width: 32px;
   }
+  /* line 66, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-pagenumber span {
     color: #fff;
   }
+  /* line 68, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-pagenumber span:before {
     content: ' / ';
   }
+  /* line 73, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar > button {
     background-image: url(../img/catalog.png);
     border: solid 1px #fff;
@@ -121,22 +159,27 @@
     white-space: nowrap;
     width: 34px;
   }
+  /* line 84, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-page-next {
     background-position: 100% -64px;
     right: 0px;
   }
+  /* line 88, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-page-prev {
     background-position: 0% -64px;
     left: 0px;
   }
+  /* line 92, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-zoom-in {
     background-position: 0% -32px;
     right: 32px;
   }
+  /* line 96, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-toolbar .cat-zoom-out {
     background-position: 100% -32px;
     right: 64px;
   }
+  /* line 104, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-wrapper {
     overflow: auto;
     position: relative;
@@ -144,12 +187,14 @@
     height: 100%;
     width: 100%;
   }
+  /* line 110, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-wrapper .cat-spread {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
   }
+  /* line 120, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page {
     -o-transform: scale(0, 1);
     -ms-transform: scale(0, 1);
@@ -161,6 +206,7 @@
     bottom: 0;
     z-index: 100;
   }
+  /* line 127, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-odd {
     -o-transform-origin: 100% 50%;
     -ms-transform-origin: 100% 50%;
@@ -170,6 +216,7 @@
     left: 0;
     right: 50%;
   }
+  /* line 132, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-even {
     -o-transform-origin: 0% 50%;
     -ms-transform-origin: 0% 50%;
@@ -179,6 +226,7 @@
     left: 50%;
     right: 0;
   }
+  /* line 137, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-open {
     -o-transform: scale(1, 1);
     -ms-transform: scale(1, 1);
@@ -187,6 +235,7 @@
     transform: scale(1, 1);
     z-index: 300;
   }
+  /* line 141, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-close {
     -o-transform: scale(0, 1);
     -ms-transform: scale(0, 1);
@@ -195,6 +244,7 @@
     transform: scale(0, 1);
     z-index: 300;
   }
+  /* line 145, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-stay {
     -o-transform: scale(1, 1);
     -ms-transform: scale(1, 1);
@@ -203,6 +253,7 @@
     transform: scale(1, 1);
     z-index: 200;
   }
+  /* line 149, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-decreasing {
     -webkit-transition-property: -webkit-transform;
     -moz-transition-property: -moz-transform;
@@ -217,24 +268,28 @@
     -o-transition-timing-function: ease;
     transition-timing-function: ease;
   }
+  /* line 153, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-decreasing.cat-page-odd {
     -webkit-transition-delay: 500ms;
     -moz-transition-delay: 500ms;
     -o-transition-delay: 500ms;
     transition-delay: 500ms;
   }
+  /* line 156, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-decreasing.cat-page-even {
     -webkit-transition-delay: 1000ms;
     -moz-transition-delay: 1000ms;
     -o-transition-delay: 1000ms;
     transition-delay: 1000ms;
   }
+  /* line 159, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-decreasing.cat-page-stay {
     -webkit-transition-property: none;
     -moz-transition-property: none;
     -o-transition-property: none;
     transition-property: none;
   }
+  /* line 163, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-increasing {
     -webkit-transition-property: -webkit-transform;
     -moz-transition-property: -moz-transform;
@@ -249,24 +304,28 @@
     -o-transition-timing-function: ease;
     transition-timing-function: ease;
   }
+  /* line 167, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-increasing.cat-page-odd {
     -webkit-transition-delay: 1000ms;
     -moz-transition-delay: 1000ms;
     -o-transition-delay: 1000ms;
     transition-delay: 1000ms;
   }
+  /* line 170, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-increasing.cat-page-even {
     -webkit-transition-delay: 500ms;
     -moz-transition-delay: 500ms;
     -o-transition-delay: 500ms;
     transition-delay: 500ms;
   }
+  /* line 173, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-page-increasing.cat-page-stay {
     -webkit-transition-property: none;
     -moz-transition-property: none;
     -o-transition-property: none;
     transition-property: none;
   }
+  /* line 180, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-preview {
     position: absolute;
     left: 0;
@@ -276,16 +335,20 @@
     width: 100%;
     height: 100%;
   }
+  /* line 189, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-tile {
     position: absolute;
   }
+  /* line 191, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-tile img {
     width: 100%;
     height: 100%;
   }
+  /* line 199, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-split-1 .cat-page-even {
     left: 0;
   }
+  /* line 202, ../../src/scss/useful-catalog.scss */
   .catalog-browser .cat-split-2 .cat-page-even {
     left: 50%;
   }
@@ -294,6 +357,7 @@
   /*
   	The root element
   */
+  /* line 8, ../../src/scss/_typography.scss */
   html {
     font-family: Tahoma, Verdana, Arial, Sans-Serif;
     font-size: 75%;
@@ -303,8 +367,9 @@
   /*
   	Sections
   */
+  /* line 16, ../../src/scss/_typography.scss */
   body {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     margin-top: 0px;
     margin-top: 0rem;
@@ -330,8 +395,9 @@
     min-height: 100%;
   }
 
+  /* line 26, ../../src/scss/_typography.scss */
   h1, h2, h3, h4, h5, h6 {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     margin-top: 0px;
     margin-top: 0rem;
@@ -345,26 +411,31 @@
     font-weight: normal;
   }
 
+  /* line 32, ../../src/scss/_typography.scss */
   h1 {
-    font-size: "22.5px";
+    font-size: 22.5px;
     font-size: 1.875rem;
   }
 
+  /* line 35, ../../src/scss/_typography.scss */
   h2 {
-    font-size: "19.5px";
+    font-size: 19.5px;
     font-size: 1.625rem;
   }
 
+  /* line 38, ../../src/scss/_typography.scss */
   h3 {
-    font-size: "15px";
+    font-size: 15px;
     font-size: 1.25rem;
   }
 
+  /* line 41, ../../src/scss/_typography.scss */
   address {
     display: block;
     font-style: normal;
   }
 
+  /* line 45, ../../src/scss/_typography.scss */
   section, nav, article, aside, hgroup, header, footer {
     display: block;
   }
@@ -372,12 +443,14 @@
   /*
   	Grouping content
   */
+  /* line 51, ../../src/scss/_typography.scss */
   p {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     display: block;
   }
 
+  /* line 55, ../../src/scss/_typography.scss */
   hr {
     margin-top: 12px;
     margin-top: 1rem;
@@ -396,6 +469,7 @@
     width: 100%;
   }
 
+  /* line 65, ../../src/scss/_typography.scss */
   ul {
     margin-top: 0px;
     margin-top: 0rem;
@@ -416,6 +490,7 @@
     display: block;
   }
 
+  /* line 71, ../../src/scss/_typography.scss */
   dl {
     margin-top: 0px;
     margin-top: 0rem;
@@ -428,6 +503,7 @@
     display: block;
   }
 
+  /* line 75, ../../src/scss/_typography.scss */
   dt {
     margin-top: 0px;
     margin-top: 0rem;
@@ -441,6 +517,7 @@
     font-weight: bold;
   }
 
+  /* line 80, ../../src/scss/_typography.scss */
   dd {
     margin-top: 0px;
     margin-top: 0rem;
@@ -453,6 +530,7 @@
     display: block;
   }
 
+  /* line 84, ../../src/scss/_typography.scss */
   pre, dialog, blockquote, ol {
     display: block;
   }
@@ -460,24 +538,29 @@
   /*
   	Text-level semantics
   */
+  /* line 90, ../../src/scss/_typography.scss */
   a {
     color: #ff6a00;
     text-decoration: underline;
   }
 
+  /* line 94, ../../src/scss/_typography.scss */
   a:hover {
     color: #ff9800;
     text-decoration: underline;
   }
 
+  /* line 98, ../../src/scss/_typography.scss */
   sub {
     line-height: 0;
   }
 
+  /* line 101, ../../src/scss/_typography.scss */
   sup {
     line-height: 0;
   }
 
+  /* line 104, ../../src/scss/_typography.scss */
   time, progress, meter {
     display: block;
   }
@@ -485,16 +568,19 @@
   /*
   	Embedded content
   */
+  /* line 110, ../../src/scss/_typography.scss */
   img {
     border: none;
     vertical-align: middle;
   }
 
+  /* line 114, ../../src/scss/_typography.scss */
   figure, figcaption, video, audio, canvas {
     display: block;
   }
 
   /* Tabular data */
+  /* line 118, ../../src/scss/_typography.scss */
   table {
     margin-top: 0px;
     margin-top: 0rem;
@@ -507,20 +593,24 @@
     border-collapse: collapse;
   }
 
+  /* line 122, ../../src/scss/_typography.scss */
   caption {
-    font-size: "15px";
+    font-size: 15px;
     font-size: 1.25rem;
     font-weight: bold;
     text-align: left;
   }
 
+  /* line 128, ../../src/scss/_typography.scss */
   tr {
     vertical-align: top;
   }
+  /* line 130, ../../src/scss/_typography.scss */
   tr:nth-child(2n) {
     background-color: #eeeeee;
   }
 
+  /* line 132, ../../src/scss/_typography.scss */
   th, td {
     padding-top: 6px;
     padding-top: 0.5rem;
@@ -532,6 +622,7 @@
     padding-left: 1rem;
   }
 
+  /* line 135, ../../src/scss/_typography.scss */
   th, th a, th a:hover {
     background-color: #ff9800;
     color: #fff;
@@ -544,6 +635,7 @@
   /*
   	Forms
   */
+  /* line 146, ../../src/scss/_typography.scss */
   form {
     margin-top: 0px;
     margin-top: 0rem;
@@ -555,6 +647,7 @@
     margin-left: 0rem;
   }
 
+  /* line 149, ../../src/scss/_typography.scss */
   fieldset {
     margin-top: 0px;
     margin-top: 0rem;
@@ -576,6 +669,7 @@
     border: none;
   }
 
+  /* line 155, ../../src/scss/_typography.scss */
   legend {
     margin-top: 0px;
     margin-top: 0rem;
@@ -589,13 +683,15 @@
     font-weight: bold;
   }
 
+  /* line 161, ../../src/scss/_typography.scss */
   input, button, select, textarea {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     font-family: Tahoma, Verdana, Arial, Sans-Serif;
     vertical-align: baseline;
   }
 
+  /* line 166, ../../src/scss/_typography.scss */
   input[type=color], input[type=range], input[type=number], input[type=date], input[type=text], input[type=password], input[type=email], select, textarea {
     -webkit-box-shadow: inset 0 0 5px #cccccc;
     -moz-box-shadow: inset 0 0 5px #cccccc;
@@ -619,6 +715,7 @@
     font-family: Arial, Sans-Serif;
   }
 
+  /* line 176, ../../src/scss/_typography.scss */
   input[type=checkbox], input[type=radio] {
     margin-top: 8.4px;
     margin-top: 0.7rem;
@@ -630,6 +727,7 @@
     margin-left: 0rem;
   }
 
+  /* line 179, ../../src/scss/_typography.scss */
   select {
     height: 36px;
     height: 3rem;
@@ -637,6 +735,7 @@
     padding: 0.7rem;
   }
 
+  /* line 183, ../../src/scss/_typography.scss */
   textarea {
     height: 120px;
     height: 10rem;
@@ -644,6 +743,7 @@
     padding: 0.7rem;
   }
 
+  /* line 187, ../../src/scss/_typography.scss */
   button, .button {
     -webkit-transition-property: background-color;
     -moz-transition-property: background-color;
@@ -685,11 +785,13 @@
     overflow: visible;
     text-decoration: none;
   }
+  /* line 202, ../../src/scss/_typography.scss */
   button:hover, .button:hover {
     background-color: #ff9800;
     color: #fff;
     text-decoration: none;
   }
+  /* line 207, ../../src/scss/_typography.scss */
   button.disabled, button.disabled:hover, .button.disabled, .button.disabled:hover {
     background-color: #7f7f7f;
   }
@@ -697,6 +799,7 @@
   /*
   	Interactive elements
   */
+  /* line 214, ../../src/scss/_typography.scss */
   menu {
     margin-top: 0px;
     margin-top: 0rem;
@@ -720,11 +823,13 @@
   /*
   	Miscellaneous elements
   */
+  /* line 222, ../../src/scss/_typography.scss */
   div {
     display: block;
   }
 }
 @media all and (max-width: 480px) {
+  /* line 231, ../../src/scss/_typography.scss */
   html {
     font-size: 62.5%;
   }
