@@ -1,232 +1,220 @@
+@import "compass/css3";
+@import "compass/utilities";
+@import "mixins";
 /*
 	Reference Styling for An Interactive Row of Thumbnails
 */
-
-@media all {
-
-	@import "compass/css3";
-	@import "compass/utilities";
-	@import "definitions";
-	@import "typography";
-
-	.catalog-browser {
-		display : block;
+.catalog-browser {
+	display : block;
+	margin : 0;
+	padding : 0;
+	position : relative;
+	width : 100%;
+	* {
+		@include box-sizing(border-box);
+	}
+	ul, menu {
 		margin : 0;
 		padding : 0;
-		position : relative;
-		width : 100%;
+		li {
+			display : inline;
+			list-style-type : none;
+		}
+	}
+	/*
+		loading indicator
+	*/
+	&.cat-busy {
 		* {
-			@include box-sizing(border-box);
-		}
-		ul, menu {
-			margin : 0;
-			padding : 0;
-			li {
-				display : inline;
-				list-style-type : none;
-			}
-		}
-		/*
-			loading indicator
-		*/
-		&.cat-busy {
-			* {
-				visibility : hidden;
-			}
-		}
-		/*
-			toolbar
-		*/
-		.cat-toolbar {
-			@include rem('bottom', 2);
-			height : 34px;
-			left : 50%;
-			margin-left : -111px;
-			width : 223px;
-			position : absolute;
-			z-index : 1000;
-			.cat-pagenumber {
-				background-color : $color-passive;
-				border : solid 1px #fff;
-				height : 34px;
-				left : 32px;
-				line-height : 30px;
-				position : absolute;
-				text-align : center;
-				top : 0;
-				width : 100px;
-				input {
-					@include rems('padding', 0, 0.3, 0, 0.3);
-					height : 26px;
-					line-height : 26px;
-					margin : 0;
-					text-align : right;
-					width : 32px;
-				}
-				span {
-					color : #fff;
-					&:before {
-						content : ' / ';
-					}
-				}
-			}
-			> button {
-				background-image : url(../img/catalog.png);
-				border : solid 1px #fff;
-				height : 34px;
-				overflow : hidden;
-				position : absolute;
-				text-indent : 40px;
-				top : 0px;
-				white-space : nowrap;
-				width : 34px;
-			}
-			.cat-page-next {
-				background-position : 100% -64px;
-				right : 0px;
-			}
-			.cat-page-prev {
-				background-position : 0% -64px;
-				left : 0px;
-			}
-			.cat-zoom-in {
-				background-position : 0% -32px;
-				right : 32px;
-			}
-			.cat-zoom-out {
-				background-position : 100% -32px;
-				right : 64px;
-			}
-		}
-		/*
-			zooming container
-		*/
-		.cat-wrapper {
-			overflow : auto;
-			position : relative;
-			-webkit-overflow-scrolling: touch;
-			height : 100%;
-			width : 100%;
-			.cat-spread {
-				position : absolute;
-				left : 0;
-				top : 0;
-				width : 100%;
-			}
-		}
-		/*
-			pages
-		*/
-		.cat-page {
-			@include vendors('transform', 'scale(0, 1)');
-			position : absolute;
-			top : 0;
-			bottom : 0;
-			z-index : 100;
-		}
-		.cat-page-odd {
-			@include vendors('transform-origin', '100% 50%');
-			left : 0;
-			right : 50%;
-		}
-		.cat-page-even {
-			@include vendors('transform-origin', '0% 50%');
-			left : 50%;
-			right : 0;
-		}
-		.cat-page-open {
-			@include vendors('transform', 'scale(1, 1)');
-			z-index : 300;
-		}
-		.cat-page-close {
-			@include vendors('transform', 'scale(0, 1)');
-			z-index : 300;
-		}
-		.cat-page-stay {
-			@include vendors('transform', 'scale(1, 1)');
-			z-index : 200;
-		}
-		.cat-page-decreasing {
-			@include transition-property('transform');
-			@include transition-duration('500ms');
-			@include transition-timing-function('ease');
-			&.cat-page-odd {
-				@include transition-delay('500ms');
-			}
-			&.cat-page-even {
-				@include transition-delay('1000ms');
-			}
-			&.cat-page-stay {
-				@include transition-property('none');
-			}
-		}
-		.cat-page-increasing {
-			@include transition-property('transform');
-			@include transition-duration('500ms');
-			@include transition-timing-function('ease');
-			&.cat-page-odd {
-				@include transition-delay('1000ms');
-			}
-			&.cat-page-even {
-				@include transition-delay('500ms');
-			}
-			&.cat-page-stay {
-				@include transition-property('none');
-			}
-		}
-		/*
-			tiles
-		*/
-		.cat-preview {
-			position : absolute;
-			left : 0;
-			top : 0;
-			right : 0;
-			bottom : 0;
-			width : 100%;
-			height : 100%;
-		}
-		.cat-tile {
-			position : absolute;
-			img {
-				width : 100%;
-				height : 100%;
-			}
-		}
-		/*
-			configuration overrides
-		*/
-		.cat-split-1 .cat-page-even {
-			left : 0;
-		};
-		.cat-split-2 .cat-page-even {
-			left : 50%;
-		};
-		/*
-			interaction lure
-
-		&:after {
-			background : Transparent url(../img/catalog.png) 0% -96px;
-			bottom : 10px;
-			content : '';
-			display : block;
-			height : 32px;
-			position : absolute;
-			right : 10px;
-			visibility : visible;
-			width : 32px;
-			z-index : 1000;
-		}
-		&:hover:after {
 			visibility : hidden;
 		}
-		*/
 	}
+	/*
+		toolbar
+	*/
+	.cat-toolbar {
+		@include rem('bottom', 2);
+		height : 34px;
+		left : 50%;
+		margin-left : -111px;
+		width : 223px;
+		position : absolute;
+		z-index : 1000;
+		.cat-pagenumber {
+			background-color : $color-passive;
+			border : solid 1px #fff;
+			height : 34px;
+			left : 32px;
+			line-height : 30px;
+			position : absolute;
+			text-align : center;
+			top : 0;
+			width : 100px;
+			input {
+				@include rems('padding', 0, 0.3, 0, 0.3);
+				height : 26px;
+				line-height : 26px;
+				margin : 3px 0;
+				text-align : right;
+				width : 32px;
+			}
+			span {
+				color : #fff;
+				&:before {
+					content : ' / ';
+				}
+			}
+		}
+		> button {
+			background-image : url(../img/catalog.png);
+			border : solid 1px #fff;
+			height : 34px;
+			overflow : hidden;
+			position : absolute;
+			text-indent : 40px;
+			top : 0px;
+			white-space : nowrap;
+			width : 34px;
+		}
+		.cat-page-next {
+			background-position : 100% -64px;
+			right : 0px;
+		}
+		.cat-page-prev {
+			background-position : 0% -64px;
+			left : 0px;
+		}
+		.cat-zoom-in {
+			background-position : 0% -32px;
+			right : 32px;
+		}
+		.cat-zoom-out {
+			background-position : 100% -32px;
+			right : 64px;
+		}
+	}
+	/*
+		zooming container
+	*/
+	.cat-wrapper {
+		overflow : auto;
+		position : relative;
+		-webkit-overflow-scrolling: touch;
+		height : 100%;
+		width : 100%;
+		.cat-spread {
+			position : absolute;
+			left : 0;
+			top : 0;
+			width : 100%;
+		}
+	}
+	/*
+		pages
+	*/
+	.cat-page {
+		@include vendors('transform', 'scale(0, 1)');
+		position : absolute;
+		top : 0;
+		bottom : 0;
+		z-index : 100;
+	}
+	.cat-page-odd {
+		@include vendors('transform-origin', '100% 50%');
+		left : 0;
+		right : 50%;
+	}
+	.cat-page-even {
+		@include vendors('transform-origin', '0% 50%');
+		left : 50%;
+		right : 0;
+	}
+	.cat-page-open {
+		@include vendors('transform', 'scale(1, 1)');
+		z-index : 300;
+	}
+	.cat-page-close {
+		@include vendors('transform', 'scale(0, 1)');
+		z-index : 300;
+	}
+	.cat-page-stay {
+		@include vendors('transform', 'scale(1, 1)');
+		z-index : 200;
+	}
+	.cat-page-decreasing {
+		@include transition-property('transform');
+		@include transition-duration('500ms');
+		@include transition-timing-function('ease');
+		&.cat-page-odd {
+			@include transition-delay('500ms');
+		}
+		&.cat-page-even {
+			@include transition-delay('1000ms');
+		}
+		&.cat-page-stay {
+			@include transition-property('none');
+		}
+	}
+	.cat-page-increasing {
+		@include transition-property('transform');
+		@include transition-duration('500ms');
+		@include transition-timing-function('ease');
+		&.cat-page-odd {
+			@include transition-delay('1000ms');
+		}
+		&.cat-page-even {
+			@include transition-delay('500ms');
+		}
+		&.cat-page-stay {
+			@include transition-property('none');
+		}
+	}
+	/*
+		tiles
+	*/
+	.cat-preview {
+		position : absolute;
+		left : 0;
+		top : 0;
+		right : 0;
+		bottom : 0;
+		width : 100%;
+		height : 100%;
+	}
+	.cat-tile {
+		position : absolute;
+		img {
+			width : 100%;
+			height : 100%;
+		}
+	}
+	/*
+		configuration overrides
+	*/
+	.cat-split-1 .cat-page-even {
+		left : 0;
+	};
+	.cat-split-2 .cat-page-even {
+		left : 50%;
+	};
+	/*
+		interaction lure
+
+	&:after {
+		background : Transparent url(../img/catalog.png) 0% -96px;
+		bottom : 10px;
+		content : '';
+		display : block;
+		height : 32px;
+		position : absolute;
+		right : 10px;
+		visibility : visible;
+		width : 32px;
+		z-index : 1000;
+	}
+	&:hover:after {
+		visibility : hidden;
+	}
+	*/
 }
 
-@media (min-width: 1200px) {}
-@media (min-width: 980px) and (max-width: 1199px) {}
-@media (min-width: 768px) and (max-width: 979px) {}
-@media (max-width: 767px) {}
-@media (max-width: 480px) {}
-@media print {}
