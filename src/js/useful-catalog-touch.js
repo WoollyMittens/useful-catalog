@@ -6,8 +6,12 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// provides touch controls
@@ -72,4 +76,9 @@
 		};
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Touch;
+	}
+
+})();

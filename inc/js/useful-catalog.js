@@ -707,14 +707,18 @@
 
 /*
 	Source:
-	van Creij, Maurice (2013). "useful.catalog.js: Scanned Print Media Viewer", version 20130814, http://www.woollymittens.nl/.
+	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20140828, http://www.woollymittens.nl/.
 
 	License:
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// a page is in a position on a stack
@@ -856,7 +860,12 @@
 		// events
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Page;
+	}
+
+})();
 
 /*
 	Source:
@@ -866,8 +875,12 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// a spread contains a front cover, all pages and a rear cover
@@ -1066,7 +1079,12 @@
 		};
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Spread;
+	}
+
+})();
 
 /*
 	Source:
@@ -1076,8 +1094,12 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// a tile is part of the page positioned using fractional coordinates that correspond to the cropping
@@ -1140,7 +1162,12 @@
 		};
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Tile;
+	}
+
+})();
 
 /*
 	Source:
@@ -1150,8 +1177,12 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// provides user interface elements
@@ -1323,7 +1354,12 @@
 		};
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Toolbar;
+	}
+
+})();
 
 /*
 	Source:
@@ -1333,8 +1369,12 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// provides touch controls
@@ -1399,7 +1439,12 @@
 		};
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Touch;
+	}
+
+})();
 
 /*
 	Source:
@@ -1409,10 +1454,15 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
+	// private functions
 	useful.Catalog = function (obj, cfg) {
 		// properties
 		this.obj = obj;
@@ -1568,4 +1618,9 @@
 		this.start();
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog;
+	}
+
+})();

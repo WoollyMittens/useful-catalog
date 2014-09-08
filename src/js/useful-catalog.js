@@ -6,10 +6,15 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
+	// private functions
 	useful.Catalog = function (obj, cfg) {
 		// properties
 		this.obj = obj;
@@ -165,4 +170,9 @@
 		this.start();
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog;
+	}
+
+})();

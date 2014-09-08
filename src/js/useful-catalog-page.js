@@ -1,13 +1,17 @@
 /*
 	Source:
-	van Creij, Maurice (2013). "useful.catalog.js: Scanned Print Media Viewer", version 20130814, http://www.woollymittens.nl/.
+	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20140828, http://www.woollymittens.nl/.
 
 	License:
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-(function (useful) {
+// public object
+var useful = useful || {};
 
+(function(){
+
+	// invoke strict mode
 	"use strict";
 
 	// a page is in a position on a stack
@@ -149,4 +153,9 @@
 		// events
 	};
 
-}(window.useful = window.useful || {}));
+	// return as a require.js module
+	if (typeof module !== 'undefined') {
+		exports = module.exports = useful.Catalog_Page;
+	}
+
+})();
