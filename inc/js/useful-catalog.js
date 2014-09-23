@@ -1182,6 +1182,7 @@ var useful = useful || {};
 					'bottom' : this.area.odd.bottom
 				};
 			}
+			console.log('this.area', this.area);
 		};
 		this.redraw = function () {
 			var even = this.open + this.open % this.split,
@@ -1249,6 +1250,11 @@ var useful = useful || {};
 			// apply the zoom factor
 			this.obj.style.width = (magnification * 100) + '%';
 			this.obj.style.height = (magnification * 100) + '%';
+//			this.obj.style.width = '100%';
+//			this.obj.style.height = '100%';
+//			this.obj.style.transform = 'scale(' + magnification + ')';
+			// show or hide the scroll bars
+			this.obj.parentNode.style.overflow = (magnification === 1) ? 'hidden' : 'auto';
 			// store the magnification
 			this.magnification = magnification;
 			// re-adjust the position
