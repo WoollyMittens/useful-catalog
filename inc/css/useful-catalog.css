@@ -235,50 +235,50 @@
 /* line 144, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing {
   -webkit-transition-property: -webkit-transform;
-  transition-property: transform;
-  -webkit-transition-duration: 500ms;
-  transition-duration: 500ms;
-  -webkit-transition-timing-function: ease;
-  transition-timing-function: ease;
+  transition-property: "transform";
+  -webkit-transition-duration: "500ms";
+  transition-duration: "500ms";
+  -webkit-transition-timing-function: "ease";
+  transition-timing-function: "ease";
 }
 /* line 148, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-odd {
-  -webkit-transition-delay: 500ms;
-  transition-delay: 500ms;
+  -webkit-transition-delay: "500ms";
+  transition-delay: "500ms";
 }
 /* line 151, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-even {
-  -webkit-transition-delay: 1000ms;
-  transition-delay: 1000ms;
+  -webkit-transition-delay: "1000ms";
+  transition-delay: "1000ms";
 }
 /* line 154, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-stay {
-  -webkit-transition-property: none;
-  transition-property: none;
+  -webkit-transition-property: "none";
+  transition-property: "none";
 }
 /* line 158, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing {
   -webkit-transition-property: -webkit-transform;
-  transition-property: transform;
-  -webkit-transition-duration: 500ms;
-  transition-duration: 500ms;
-  -webkit-transition-timing-function: ease;
-  transition-timing-function: ease;
+  transition-property: "transform";
+  -webkit-transition-duration: "500ms";
+  transition-duration: "500ms";
+  -webkit-transition-timing-function: "ease";
+  transition-timing-function: "ease";
 }
 /* line 162, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-odd {
-  -webkit-transition-delay: 1000ms;
-  transition-delay: 1000ms;
+  -webkit-transition-delay: "1000ms";
+  transition-delay: "1000ms";
 }
 /* line 165, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-even {
-  -webkit-transition-delay: 500ms;
-  transition-delay: 500ms;
+  -webkit-transition-delay: "500ms";
+  transition-delay: "500ms";
 }
 /* line 168, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-stay {
-  -webkit-transition-property: none;
-  transition-property: none;
+  -webkit-transition-property: "none";
+  transition-property: "none";
 }
 /* line 175, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-preview {
