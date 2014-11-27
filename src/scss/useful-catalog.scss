@@ -118,56 +118,56 @@
 		top : 0;
 		bottom : 0;
 		z-index : 100;
-	}
-	.cat-page-odd {
-		@include vendors('transform-origin', '100% 50%');
-		left : 0;
-		right : 50%;
-	}
-	.cat-page-even {
-		@include vendors('transform-origin', '0% 50%');
-		left : 50%;
-		right : 0;
-	}
-	.cat-page-open {
-		@include vendors('transform', 'scale(1, 1)');
-		z-index : 300;
-	}
-	.cat-page-close {
-		@include vendors('transform', 'scale(0, 1)');
-		z-index : 300;
-	}
-	.cat-page-stay {
-		@include vendors('transform', 'scale(1, 1)');
-		z-index : 200;
-	}
-	.cat-page-decreasing {
-		@include transition-property('transform');
-		@include transition-duration('500ms');
-		@include transition-timing-function('ease');
-		&.cat-page-odd {
-			@include transition-delay('500ms');
+		&-odd {
+			@include vendors('transform-origin', '100% 50%');
+			left : 0;
+			right : 50%;
 		}
-		&.cat-page-even {
-			@include transition-delay('1000ms');
+		&-even {
+			@include vendors('transform-origin', '0% 50%');
+			left : 50%;
+			right : 0;
 		}
-		&.cat-page-stay {
-			@include transition-property('none');
+		&-open {
+			@include vendors('transform', 'scale(1, 1)');
+			z-index : 300;
 		}
-	}
-	.cat-page-increasing {
-		@include transition-property('transform');
-		@include transition-duration('500ms');
-		@include transition-timing-function('ease');
-		&.cat-page-odd {
-			@include transition-delay('1000ms');
+		&-close {
+			@include vendors('transform', 'scale(0, 1)');
+			z-index : 300;
 		}
-		&.cat-page-even {
-			@include transition-delay('500ms');
+		&-stay {
+			@include vendors('transform', 'scale(1, 1)');
+			z-index : 200;
 		}
-		&.cat-page-stay {
-			@include transition-property('none');
+		&-decreasing {
+			@include transition-property(transform);
+			@include transition-duration(500ms);
+			@include transition-timing-function(ease);
+			&.cat-page-odd {
+				@include transition-delay(500ms);
+			}
+			&.cat-page-even {
+				@include transition-delay(1000ms);
+			}
+			&.cat-page-stay {
+				@include transition-property(none);
+			}
 		}
+		&-increasing {
+			@include transition-property(transform);
+			@include transition-duration(500ms);
+			@include transition-timing-function(ease);
+			&.cat-page-odd {
+				@include transition-delay(1000ms);
+			}
+			&.cat-page-even {
+				@include transition-delay(500ms);
+			}
+			&.cat-page-stay {
+				@include transition-property(none);
+			}
+		}	
 	}
 	/*
 		tiles
@@ -217,4 +217,3 @@
 	}
 	*/
 }
-

@@ -1,29 +1,29 @@
 /*
-	Constants
+Constants
 */
 /*
-	Hides text in the margin
+Hides text in the margin
 */
 /*
-	Turns a button into an icon
+Turns a button into an icon
 */
 /*
-	Centres a graphic or glyph inside an icon
+Centres a graphic or glyph inside an icon
 */
 /*
-	Offers both the pixel and rem value of a single property
+Offers both the pixel and rem value of a single property
 */
 /*
-	Offers both the pixel and rem values of a shorthand property
+Offers both the pixel and rem values of a shorthand property
 */
 /*
-	Offers the text size as both the pixel and rem value
+Offers the text size as both the pixel and rem value
 */
 /*
-	Adds vendor prefixed to a property
+Adds vendor prefixed to a property
 */
 /*
-	Applies the "clearfix" hack to a container with floating content
+Applies the "clearfix" hack to a container with floating content
 */
 /*
 	Reference Styling for An Interactive Row of Thumbnails
@@ -195,7 +195,7 @@
   bottom: 0;
   z-index: 100;
 }
-/* line 122, ../../src/scss/useful-catalog.scss */
+/* line 121, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-odd {
   -ms-transform-origin: 100% 50%;
   -webkit-transform-origin: 100% 50%;
@@ -203,7 +203,7 @@
   left: 0;
   right: 50%;
 }
-/* line 127, ../../src/scss/useful-catalog.scss */
+/* line 126, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-even {
   -ms-transform-origin: 0% 50%;
   -webkit-transform-origin: 0% 50%;
@@ -211,74 +211,74 @@
   left: 50%;
   right: 0;
 }
-/* line 132, ../../src/scss/useful-catalog.scss */
+/* line 131, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-open {
   -ms-transform: scale(1, 1);
   -webkit-transform: scale(1, 1);
   transform: scale(1, 1);
   z-index: 300;
 }
-/* line 136, ../../src/scss/useful-catalog.scss */
+/* line 135, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-close {
   -ms-transform: scale(0, 1);
   -webkit-transform: scale(0, 1);
   transform: scale(0, 1);
   z-index: 300;
 }
-/* line 140, ../../src/scss/useful-catalog.scss */
+/* line 139, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-stay {
   -ms-transform: scale(1, 1);
   -webkit-transform: scale(1, 1);
   transform: scale(1, 1);
   z-index: 200;
 }
-/* line 144, ../../src/scss/useful-catalog.scss */
+/* line 143, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing {
   -webkit-transition-property: -webkit-transform;
-  transition-property: "transform";
-  -webkit-transition-duration: "500ms";
-  transition-duration: "500ms";
-  -webkit-transition-timing-function: "ease";
-  transition-timing-function: "ease";
+  transition-property: transform;
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
 }
-/* line 148, ../../src/scss/useful-catalog.scss */
+/* line 147, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-odd {
-  -webkit-transition-delay: "500ms";
-  transition-delay: "500ms";
+  -webkit-transition-delay: 500ms;
+  transition-delay: 500ms;
 }
-/* line 151, ../../src/scss/useful-catalog.scss */
+/* line 150, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-even {
-  -webkit-transition-delay: "1000ms";
-  transition-delay: "1000ms";
+  -webkit-transition-delay: 1000ms;
+  transition-delay: 1000ms;
 }
-/* line 154, ../../src/scss/useful-catalog.scss */
+/* line 153, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-stay {
-  -webkit-transition-property: "none";
-  transition-property: "none";
+  -webkit-transition-property: none;
+  transition-property: none;
 }
-/* line 158, ../../src/scss/useful-catalog.scss */
+/* line 157, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing {
   -webkit-transition-property: -webkit-transform;
-  transition-property: "transform";
-  -webkit-transition-duration: "500ms";
-  transition-duration: "500ms";
-  -webkit-transition-timing-function: "ease";
-  transition-timing-function: "ease";
+  transition-property: transform;
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  -webkit-transition-timing-function: ease;
+  transition-timing-function: ease;
 }
-/* line 162, ../../src/scss/useful-catalog.scss */
+/* line 161, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-odd {
-  -webkit-transition-delay: "1000ms";
-  transition-delay: "1000ms";
+  -webkit-transition-delay: 1000ms;
+  transition-delay: 1000ms;
 }
-/* line 165, ../../src/scss/useful-catalog.scss */
+/* line 164, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-even {
-  -webkit-transition-delay: "500ms";
-  transition-delay: "500ms";
+  -webkit-transition-delay: 500ms;
+  transition-delay: 500ms;
 }
-/* line 168, ../../src/scss/useful-catalog.scss */
+/* line 167, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-stay {
-  -webkit-transition-property: "none";
-  transition-property: "none";
+  -webkit-transition-property: none;
+  transition-property: none;
 }
 /* line 175, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-preview {

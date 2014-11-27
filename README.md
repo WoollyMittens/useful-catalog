@@ -26,6 +26,65 @@ To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5
 <![endif]-->
 ```
 
+## How to start the script
+
+```javascript
+var catalog = new useful.Catalog().init({
+	'element' : document.getElementById('catalogExample'),
+	'imageslice' : 'inc/php/imageslice.php?src=../../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
+	'cache' : 256,
+	'delay' : 100,
+	'duration' : 1600,
+	'tile' : 128,
+	'split' : 2,
+	'open' : 0,
+	'colorPassive' : '#ff6a00',
+	'colorActive' : '#d45800',
+	'colorHover' : '#ff9800',
+	'colorDisabled' : '#7f7f7f'
+});
+```
+
+**tileSource : {url}** - A webservice that provides image tiles (PHP example included).
+
+**tileCache : {integer}** - The amount of tiles that can be active at one time. Reduce this to save memory at the expense of bandwidth.
+
+**tileSize : {integer}** - The horizontal and vertical size of each tile in pixels.
+
+**allowRotation : {boolean}** - Enable or disable rotation as well as pan and zoom.
+
+## How to control the script
+
+### zoomTo
+
+```javascript
+catalog.zoomTo(factor);
+```
+
+Applies a zoom factor to the viewer.
+
+**factor : {integer}** - Zoom factor to apply.
+
+### pageTo
+
+```javascript
+catalog.pageTo(page);
+```
+
+Open a specific page in the viewer.
+
+**page : {integer}** - Page number to display.
+
+### pageBy
+
+```javascript
+catalog.pageBy(increment);
+```
+
+Increase or decrease the page number.
+
+**increment : {integer}** - Increment to add to the page number (can be negative).
+
 ## How to build the script
 
 This project uses node.js from http://nodejs.org/

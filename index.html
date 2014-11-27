@@ -64,7 +64,8 @@
 				<script>
 				//<!--
 					// create a new instance of the script
-					var catalog = new useful.Catalog( document.getElementById('catalogExample'), {
+					var catalog = new useful.Catalog().init({
+						'element' : document.getElementById('catalogExample'),
 						'imageslice' : 'inc/php/imageslice.php?src=../../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
 						'cache' : 256,
 						'delay' : 100,
