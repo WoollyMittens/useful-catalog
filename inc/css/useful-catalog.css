@@ -34,7 +34,7 @@ Applies the "clearfix" hack to a container with floating content
   margin: 0;
   padding: 0;
   position: relative;
-  width: 100%;
+  width: 100%
   /*
   	loading indicator
   */
@@ -234,50 +234,40 @@ Applies the "clearfix" hack to a container with floating content
 }
 /* line 143, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing {
-  -webkit-transition-property: -webkit-transform;
+  transition-property: -webkit-transform;
   transition-property: transform;
-  -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
-  -webkit-transition-timing-function: ease;
   transition-timing-function: ease;
 }
 /* line 147, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-odd {
-  -webkit-transition-delay: 500ms;
   transition-delay: 500ms;
 }
 /* line 150, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-even {
-  -webkit-transition-delay: 1000ms;
   transition-delay: 1000ms;
 }
 /* line 153, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-decreasing.cat-page-stay {
-  -webkit-transition-property: none;
   transition-property: none;
 }
 /* line 157, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing {
-  -webkit-transition-property: -webkit-transform;
+  transition-property: -webkit-transform;
   transition-property: transform;
-  -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
-  -webkit-transition-timing-function: ease;
   transition-timing-function: ease;
 }
 /* line 161, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-odd {
-  -webkit-transition-delay: 1000ms;
   transition-delay: 1000ms;
 }
 /* line 164, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-even {
-  -webkit-transition-delay: 500ms;
   transition-delay: 500ms;
 }
 /* line 167, ../../src/scss/useful-catalog.scss */
 .catalog-browser .cat-page-increasing.cat-page-stay {
-  -webkit-transition-property: none;
   transition-property: none;
 }
 /* line 175, ../../src/scss/useful-catalog.scss */

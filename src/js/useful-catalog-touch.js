@@ -16,7 +16,6 @@ useful.Catalog.prototype.Touch = function (parent) {
 	"use strict";
 	this.parent = parent;
 	this.obj = null;
-	this.hasTouch = (('ontouchstart' in window) || ('msmaxtouchpoints' in navigator)); //|| ('onmsgesturechange' in window));
 	// methods
 	this.start = function () {
 		// start touch controls
@@ -26,7 +25,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			'increment' : 0.1,
 			'swipeLeft' : this.onSwipeLeft(),
 			'swipeRight' : this.onSwipeRight(),
-			'drag' : (!this.hasTouch) ? this.onDrag() : function () {},
+			'drag' : this.onDrag(),
 			'pinch' : this.onPinch()
 		});
 		// TODO: double tap for zoom in / out
