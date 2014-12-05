@@ -1,6 +1,6 @@
 # useful.catalog.js: Scanned Print Media Viewer
 
-Browsing through a long list of irregularly shaped thumbnails using scrolling controls.
+A viewer for browsing through and zooming in on magazine pages.
 
 Try the <a href="http://www.woollymittens.nl/useful/default.php?url=useful-catalog">demo</a>.
 
