@@ -16,6 +16,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 	"use strict";
 	this.parent = parent;
 	this.obj = null;
+	this.hasTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
 	// methods
 	this.start = function () {
 		// start touch controls
@@ -31,12 +32,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 		// TODO: double tap for zoom in / out
 	};
 	this.update = function () {
-		// if touch is available
-		if (this.hasTouch && this.parent.spread.magnification > 1) {
-			this.gestures.enableDefaultTouch();
-		} else {
-			this.gestures.disableDefaultTouch();
-		}
+		// nothing to do yet
 	};
 	// events
 	this.onSwipeLeft = function () {
@@ -61,7 +57,10 @@ useful.Catalog.prototype.Touch = function (parent) {
 		var _this = this;
 		return function (metrics) {
 			// handle click and drag scrolling for mice
-			_this.parent.moveBy(metrics.horizontal, metrics.vertical);
+			_this.parent.moveBy(
+				Math.round(metrics.horizontal),
+				Math.round(metrics.vertical)
+			);
 		};
 	};
 	this.onPinch = function () {
