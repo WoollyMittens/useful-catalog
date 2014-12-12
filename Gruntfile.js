@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	var name = 'catalog';
 	var libs = [
 		'../useful-gestures/src/js/useful-gestures.js',
+		'../useful-gestures/src/js/useful-gestures-main.js',
 		'../useful-gestures/src/js/useful-gestures-multi.js',
 		'../useful-gestures/src/js/useful-gestures-single.js',
 		'../useful-transitions/src/js/useful-transitions.js',

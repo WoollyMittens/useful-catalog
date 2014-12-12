@@ -15,13 +15,15 @@ useful.Catalog.prototype.Touch = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.hasTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
 	// methods
 	this.start = function () {
 		// start touch controls
 		this.gestures = new useful.Gestures().init({
-			'element' : this.parent.obj,
+			'element' : this.parent.element,
 			'threshold' : 100,
 			'increment' : 0.1,
 			'swipeLeft' : this.onSwipeLeft(),

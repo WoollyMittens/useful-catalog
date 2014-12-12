@@ -15,6 +15,8 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
+	this.config = parent.config;
+	this.context = parent.context;
 	this.menu = null;
 	this.elements = {};
 	// methods
@@ -29,10 +31,10 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		// add the zoom controls to the toolbar
 		this.addZoomControls();
 		// add the menu to the parent element
-		this.parent.obj.appendChild(this.menu);
+		this.parent.element.appendChild(this.menu);
 	};
 	this.update = function () {
-		// get the spread object
+		// get the spread elementect
 		var spread = this.parent.spread;
 		// update the page number
 		this.elements.pageNumberInput.value = (spread.open < spread.pages.length) ? spread.open + 1 : spread.pages.length;
@@ -143,7 +145,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			_this.zoomInRepeat = setInterval(function () {
 				// increase the zoom factor
 				_this.parent.zoomBy(1.1);
-			}, Math.round(_this.parent.cfg.delay * 0.75));
+			}, Math.round(_this.parent.config.delay * 0.75));
 			// cancel the click
 			event.preventDefault();
 		};
@@ -164,7 +166,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			_this.zoomOutRepeat = setInterval(function () {
 				// decrease the zoom factor
 				_this.parent.zoomBy(0.9);
-			}, Math.round(_this.parent.cfg.delay * 0.75));
+			}, Math.round(_this.parent.config.delay * 0.75));
 			// cancel the click
 			event.preventDefault();
 		};

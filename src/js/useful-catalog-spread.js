@@ -15,7 +15,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.wrapper = null;
 	this.horizontal = 0.5;
 	this.vertical = 0.5;
@@ -29,20 +31,20 @@ useful.Catalog.prototype.Spread = function (parent) {
 	this.timeout = null;
 	this.tilesCount = 0;
 	this.busy = false;
-	// objects
+	// elementects
 	this.pages = [];
 	// methods
 	this.start = function () {
 		// build a container for the pages
-		this.obj = document.createElement('div');
-		this.obj.className = 'cat-spread cat-split-' + this.split;
+		this.element = document.createElement('div');
+		this.element.className = 'cat-spread cat-split-' + this.split;
 		// build a wrapper for the container
 		this.wrapper = document.createElement('div');
 		this.wrapper.className = 'cat-wrapper';
 		// create all the pages
-		var assets = this.parent.obj.getElementsByTagName('a');
+		var assets = this.parent.element.getElementsByTagName('a');
 		for (var a = 0, b = assets.length; a < b; a += 1) {
-			this.pages[a] = new this.parent.Page(this);
+			this.pages[a] = new this.context.Page(this);
 			this.pages[a].source = assets[a].getAttribute('href');
 			this.pages[a].width = parseInt(assets[a].getAttribute('data-width'), 10);
 			this.pages[a].height = parseInt(assets[a].getAttribute('data-height'), 10);
@@ -56,12 +58,12 @@ useful.Catalog.prototype.Spread = function (parent) {
 			this.pages[a].start();
 		}
 		// clear the parent
-		this.parent.obj.innerHTML = '';
+		this.parent.element.innerHTML = '';
 		// add the container to the parent
-		this.wrapper.appendChild(this.obj);
-		this.parent.obj.appendChild(this.wrapper);
+		this.wrapper.appendChild(this.element);
+		this.parent.element.appendChild(this.wrapper);
 		// keep track of scrolling
-		this.parent.obj.addEventListener('scroll', this.onMove(), true);
+		this.parent.element.addEventListener('scroll', this.onMove(), true);
 		// apply the starting settings
 		this.zoom(this.magnification);
 	};
@@ -163,13 +165,13 @@ useful.Catalog.prototype.Spread = function (parent) {
 	};
 	this.zoom = function (magnification) {
 		// apply the zoom factor
-		this.obj.style.width = (magnification * 100) + '%';
-		this.obj.style.height = (magnification * 100) + '%';
-//			this.obj.style.width = '100%';
-//			this.obj.style.height = '100%';
-//			this.obj.style.transform = 'scale(' + magnification + ')';
+		this.element.style.width = (magnification * 100) + '%';
+		this.element.style.height = (magnification * 100) + '%';
+//			this.element.style.width = '100%';
+//			this.element.style.height = '100%';
+//			this.element.style.transform = 'scale(' + magnification + ')';
 		// show or hide the scroll bars
-		this.obj.parentNode.style.overflow = (magnification === 1) ? 'hidden' : 'auto';
+		this.element.parentNode.style.overflow = (magnification === 1) ? 'hidden' : 'auto';
 		// store the magnification
 		this.magnification = magnification;
 		// re-adjust the position
@@ -181,8 +183,8 @@ useful.Catalog.prototype.Spread = function (parent) {
 		horizontal = horizontal || this.horizontal;
 		vertical = vertical || this.vertical;
 		// set the position of the spread
-		this.wrapper.scrollLeft = horizontal * (this.obj.offsetWidth - this.parent.obj.offsetWidth);
-		this.wrapper.scrollTop = vertical * (this.obj.offsetHeight - this.parent.obj.offsetHeight);
+		this.wrapper.scrollLeft = horizontal * (this.element.offsetWidth - this.parent.element.offsetWidth);
+		this.wrapper.scrollTop = vertical * (this.element.offsetHeight - this.parent.element.offsetHeight);
 		// store the position
 		this.horizontal = horizontal;
 		this.vertical = vertical;
@@ -190,7 +192,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		clearTimeout(this.afterMove);
 		this.afterMove = setTimeout(function () {
 			_this.parent.update();
-		}, _this.parent.cfg.duration);
+		}, _this.parent.config.duration);
 	};
 	// events
 	this.onMove = function () {
@@ -200,14 +202,14 @@ useful.Catalog.prototype.Spread = function (parent) {
 			clearTimeout(_this.timeout);
 			_this.timeout = setTimeout(function () {
 				// note the new position
-				var horizontal = _this.wrapper.scrollLeft / (_this.obj.offsetWidth - _this.wrapper.offsetWidth),
-					vertical = _this.wrapper.scrollTop / (_this.obj.offsetHeight - _this.wrapper.offsetHeight);
+				var horizontal = _this.wrapper.scrollLeft / (_this.element.offsetWidth - _this.wrapper.offsetWidth),
+					vertical = _this.wrapper.scrollTop / (_this.element.offsetHeight - _this.wrapper.offsetHeight);
 				// validate and store the new position
 				_this.horizontal = (isNaN(horizontal)) ? 0.5 : horizontal;
 				_this.vertical = (isNaN(vertical)) ? 0.5 : vertical;
 				// ask the spread to update
 				_this.update();
-			}, _this.parent.cfg.delay);
+			}, _this.parent.config.delay);
 		};
 	};
 };

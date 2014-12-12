@@ -11,39 +11,157 @@ var useful = useful || {};
 useful.Gestures = useful.Gestures || function () {};
 
 // extend the constructor
+useful.Gestures.prototype.Main = function (config, context) {
+
+	// PROPERTIES
+
+	"use strict";
+	this.config = config;
+	this.context = context;
+	this.element = config.element;
+	this.paused = false;
+
+	// METHODS
+
+	this.init = function () {
+		// check the configuration properties
+		this.config = this.checkConfig(config);
+		// add the single touch events
+		this.single = new this.context.Single(this).init();
+		// add the multi touch events
+		this.multi = new this.context.Multi(this).init();
+		// return the object
+		return this;
+	};
+
+	this.checkConfig = function (config) {
+		// add default values for missing ones
+		config.threshold = config.threshold || 50;
+		config.increment = config.increment || 0.1;
+		// cancel all events by default
+		if (config.cancelTouch === undefined || config.cancelTouch === null) { config.cancelTouch = true; }
+		if (config.cancelGesture === undefined || config.cancelGesture === null) { config.cancelGesture = true; }
+		// add dummy event handlers for missing ones
+		config.swipeUp = config.swipeUp || function () {};
+		config.swipeLeft = config.swipeLeft || function () {};
+		config.swipeRight = config.swipeRight || function () {};
+		config.swipeDown = config.swipeDown || function () {};
+		config.drag = config.drag || function () {};
+		config.pinch = config.pinch || function () {};
+		config.twist = config.twist || function () {};
+		config.doubleTap = config.doubleTap || function () {};
+		// return the fixed config
+		return config;
+	};
+
+	this.readEvent = function (event) {
+		var coords = {}, offsets;
+		// try all likely methods of storing coordinates in an event
+		if (event.touches && event.touches[0]) {
+			coords.x = event.touches[0].pageX;
+			coords.y = event.touches[0].pageY;
+		} else if (event.pageX !== undefined) {
+			coords.x = event.pageX;
+			coords.y = event.pageY;
+		} else {
+			coords.x = event.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+			coords.y = event.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
+		}
+		return coords;
+	};
+
+	this.correctOffset = function (element) {
+		var offsetX = 0, offsetY = 0;
+		// if there is an offset
+		if (element.offsetParent) {
+			// follow the offsets back to the right parent element
+			while (element !== this.element) {
+				offsetX += element.offsetLeft;
+				offsetY += element.offsetTop;
+				element = element.offsetParent;
+			}
+		}
+		// return the offsets
+		return { 'x' : offsetX, 'y' : offsetY };
+	};
+
+	// EXTERNAL
+
+	this.enableDefaultTouch = function () {
+		this.config.cancelTouch = false;
+	};
+
+	this.disableDefaultTouch = function () {
+		this.config.cancelTouch = true;
+	};
+
+	this.enableDefaultGesture = function () {
+		this.config.cancelGesture = false;
+	};
+
+	this.disableDefaultGesture = function () {
+		this.config.cancelGesture = true;
+	};
+
+};
+
+// return as a require.js module
+if (typeof module !== 'undefined') {
+	exports = module.exports = useful.Gestures.Main;
+}
+
+/*
+	Source:
+	van Creij, Maurice (2014). "useful.gestures.js: A library of useful functions to ease working with touch and gestures.", version 20141127, http://www.woollymittens.nl/.
+
+	License:
+	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+*/
+
+// create the constructor if needed
+var useful = useful || {};
+useful.Gestures = useful.Gestures || function () {};
+
+// extend the constructor
 useful.Gestures.prototype.Multi = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
-	this.cfg = parent.cfg;
-	this.obj = parent.cfg.element;
+	this.config = parent.config;
+	this.element = parent.config.element;
 	this.gestureOrigin = null;
 	this.gestureProgression = null;
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// set the required events for gestures
 		if ('ongesturestart' in window) {
-			this.obj.addEventListener('gesturestart', this.onStartGesture());
-			this.obj.addEventListener('gesturechange', this.onChangeGesture());
-			this.obj.addEventListener('gestureend', this.onEndGesture());
+			this.element.addEventListener('gesturestart', this.onStartGesture());
+			this.element.addEventListener('gesturechange', this.onChangeGesture());
+			this.element.addEventListener('gestureend', this.onEndGesture());
 		} else if ('msgesturestart' in window) {
-			this.obj.addEventListener('msgesturestart', this.onStartGesture());
-			this.obj.addEventListener('msgesturechange', this.onChangeGesture());
-			this.obj.addEventListener('msgestureend', this.onEndGesture());
+			this.element.addEventListener('msgesturestart', this.onStartGesture());
+			this.element.addEventListener('msgesturechange', this.onChangeGesture());
+			this.element.addEventListener('msgestureend', this.onEndGesture());
 		} else {
-			this.obj.addEventListener('touchstart', this.onStartFallback());
-			this.obj.addEventListener('touchmove', this.onChangeFallback());
-			this.obj.addEventListener('touchend', this.onEndFallback());
+			this.element.addEventListener('touchstart', this.onStartFallback());
+			this.element.addEventListener('touchmove', this.onChangeFallback());
+			this.element.addEventListener('touchend', this.onEndFallback());
 		}
-		// disable the start function so it can't be started twice
-		this.init = function () {};
+		// return the object
+		return this;
 	};
+
 	this.cancelGesture = function (event) {
-		if (this.cfg.cancelGesture) {
+		if (this.config.cancelGesture) {
 			event = event || window.event;
 			event.preventDefault();
 		}
 	};
+
 	this.startGesture = function (event) {
 		// if the functionality wasn't paused
 		if (!this.parent.paused) {
@@ -59,6 +177,7 @@ useful.Gestures.prototype.Multi = function (parent) {
 			};
 		}
 	};
+
 	this.changeGesture = function (event) {
 		// if there is an origin
 		if (this.gestureOrigin) {
@@ -68,14 +187,14 @@ useful.Gestures.prototype.Multi = function (parent) {
 			// get the coordinates from the event
 			var coords = this.parent.readEvent(event);
 			// get the gesture parameters
-			this.cfg.pinch({
+			this.config.pinch({
 				'x' : coords.x,
 				'y' : coords.y,
 				'scale' : scale - this.gestureProgression.scale,
 				'event' : event,
 				'target' : this.gestureOrigin.target
 			});
-			this.cfg.twist({
+			this.config.twist({
 				'x' : coords.x,
 				'y' : coords.y,
 				'rotation' : rotation - this.gestureProgression.rotation,
@@ -89,11 +208,14 @@ useful.Gestures.prototype.Multi = function (parent) {
 			};
 		}
 	};
+
 	this.endGesture = function () {
 		// note the start position
 		this.gestureOrigin = null;
 	};
-	// fallback functionality
+
+	// FALLBACK
+
 	this.startFallback = function (event) {
 		// if the functionality wasn't paused
 		if (!this.parent.paused && event.touches.length === 2) {
@@ -110,6 +232,7 @@ useful.Gestures.prototype.Multi = function (parent) {
 			};
 		}
 	};
+
 	this.changeFallback = function (event) {
 		// if there is an origin
 		if (this.gestureOrigin && event.touches.length === 2) {
@@ -121,7 +244,7 @@ useful.Gestures.prototype.Multi = function (parent) {
 			scale += (event.touches[0].pageY - event.touches[1].pageY) / (progression.touches[0].pageY - progression.touches[1].pageY);
 			scale = scale - 2;
 			// get the gesture parameters
-			this.cfg.pinch({
+			this.config.pinch({
 				'x' : coords.x,
 				'y' : coords.y,
 				'scale' : scale,
@@ -137,78 +260,86 @@ useful.Gestures.prototype.Multi = function (parent) {
 			};
 		}
 	};
+
 	this.endFallback = function () {
 		// note the start position
 		this.gestureOrigin = null;
 	};
-	// gesture events
+
+	// GESTURE EVENTS
+
 	this.onStartGesture = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// optionally cancel the default behaviour
-			context.cancelGesture(event);
+			_this.cancelGesture(event);
 			// handle the event
-			context.startGesture(event);
-			context.changeGesture(event);
+			_this.startGesture(event);
+			_this.changeGesture(event);
 		};
 	};
+
 	this.onChangeGesture = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// optionally cancel the default behaviour
-			context.cancelGesture(event);
+			_this.cancelGesture(event);
 			// handle the event
-			context.changeGesture(event);
+			_this.changeGesture(event);
 		};
 	};
+
 	this.onEndGesture = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// handle the event
-			context.endGesture(event);
+			_this.endGesture(event);
 		};
 	};
-	// gesture events
+
+	// FALLBACK EVENTS
+
 	this.onStartFallback = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// optionally cancel the default behaviour
-			//context.cancelGesture(event);
+			//_this.cancelGesture(event);
 			// handle the event
-			context.startFallback(event);
-			context.changeFallback(event);
+			_this.startFallback(event);
+			_this.changeFallback(event);
 		};
 	};
+
 	this.onChangeFallback = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// optionally cancel the default behaviour
-			context.cancelGesture(event);
+			_this.cancelGesture(event);
 			// handle the event
-			context.changeFallback(event);
+			_this.changeFallback(event);
 		};
 	};
+
 	this.onEndFallback = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
 			// handle the event
-			context.endGesture(event);
+			_this.endGesture(event);
 		};
 	};
-	// go
-	this.start();
+
 };
 
 // return as a require.js module
@@ -230,38 +361,44 @@ useful.Gestures = useful.Gestures || function () {};
 
 // extend the constructor
 useful.Gestures.prototype.Single = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
-	this.cfg = parent.cfg;
-	this.obj = parent.cfg.element;
+	this.config = parent.config;
+	this.element = parent.config.element;
 	this.lastTouch = null;
 	this.touchOrigin = null;
 	this.touchProgression = null;
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// set the required events for mouse
-		this.obj.addEventListener('mousedown', this.onStartTouch());
-		this.obj.addEventListener('mousemove', this.onChangeTouch());
+		this.element.addEventListener('mousedown', this.onStartTouch());
+		this.element.addEventListener('mousemove', this.onChangeTouch());
 		document.body.addEventListener('mouseup', this.onEndTouch());
-		this.obj.addEventListener('mousewheel', this.onChangeWheel());
-		if (navigator.userAgent.match(/firefox/gi)) { this.obj.addEventListener('DOMMouseScroll', this.onChangeWheel()); }
+		this.element.addEventListener('mousewheel', this.onChangeWheel());
+		if (navigator.userAgent.match(/firefox/gi)) { this.element.addEventListener('DOMMouseScroll', this.onChangeWheel()); }
 		// set the required events for touch
-		this.obj.addEventListener('touchstart', this.onStartTouch());
-		this.obj.addEventListener('touchmove', this.onChangeTouch());
+		this.element.addEventListener('touchstart', this.onStartTouch());
+		this.element.addEventListener('touchmove', this.onChangeTouch());
 		document.body.addEventListener('touchend', this.onEndTouch());
-		this.obj.addEventListener('mspointerdown', this.onStartTouch());
-		this.obj.addEventListener('mspointermove', this.onChangeTouch());
+		this.element.addEventListener('mspointerdown', this.onStartTouch());
+		this.element.addEventListener('mspointermove', this.onChangeTouch());
 		document.body.addEventListener('mspointerup', this.onEndTouch());
-		// disable the start function so it can't be started twice
-		this.init = function () {};
+		// return the object
+		return this;
 	};
+
 	this.cancelTouch = function (event) {
-		if (this.cfg.cancelTouch) {
+		if (this.config.cancelTouch) {
 			event = event || window.event;
 			event.preventDefault();
 		}
 	};
+
 	this.startTouch = function (event) {
 		// if the functionality wasn't paused
 		if (!this.parent.paused) {
@@ -279,13 +416,14 @@ useful.Gestures.prototype.Single = function (parent) {
 			};
 		}
 	};
+
 	this.changeTouch = function (event) {
 		// if there is an origin
 		if (this.touchOrigin) {
 			// get the coordinates from the event
 			var coords = this.parent.readEvent(event);
 			// get the gesture parameters
-			this.cfg.drag({
+			this.config.drag({
 				'x' : this.touchOrigin.x,
 				'y' : this.touchOrigin.y,
 				'horizontal' : coords.x - this.touchProgression.x,
@@ -300,6 +438,7 @@ useful.Gestures.prototype.Single = function (parent) {
 			};
 		}
 	};
+
 	this.endTouch = function (event) {
 		// if the numbers are valid
 		if (this.touchOrigin && this.touchProgression) {
@@ -317,28 +456,28 @@ useful.Gestures.prototype.Single = function (parent) {
 				new Date().getTime() - this.lastTouch.time > 100
 			) {
 				// treat this as a double tap
-				this.cfg.doubleTap({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'event' : event, 'source' : this.touchOrigin.target});
+				this.config.doubleTap({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'event' : event, 'source' : this.touchOrigin.target});
 			// if the horizontal motion was the largest
 			} else if (Math.abs(distance.x) > Math.abs(distance.y)) {
 				// if there was a right swipe
-				if (distance.x > this.cfg.threshold) {
+				if (distance.x > this.config.threshold) {
 					// report the associated swipe
-					this.cfg.swipeRight({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : distance.x, 'event' : event, 'source' : this.touchOrigin.target});
+					this.config.swipeRight({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : distance.x, 'event' : event, 'source' : this.touchOrigin.target});
 				// else if there was a left swipe
-				} else if (distance.x < -this.cfg.threshold) {
+				} else if (distance.x < -this.config.threshold) {
 					// report the associated swipe
-					this.cfg.swipeLeft({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : -distance.x, 'event' : event, 'source' : this.touchOrigin.target});
+					this.config.swipeLeft({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : -distance.x, 'event' : event, 'source' : this.touchOrigin.target});
 				}
 			// else
 			} else {
 				// if there was a down swipe
-				if (distance.y > this.cfg.threshold) {
+				if (distance.y > this.config.threshold) {
 					// report the associated swipe
-					this.cfg.swipeDown({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : distance.y, 'event' : event, 'source' : this.touchOrigin.target});
+					this.config.swipeDown({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : distance.y, 'event' : event, 'source' : this.touchOrigin.target});
 				// else if there was an up swipe
-				} else if (distance.y < -this.cfg.threshold) {
+				} else if (distance.y < -this.config.threshold) {
 					// report the associated swipe
-					this.cfg.swipeUp({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : -distance.y, 'event' : event, 'source' : this.touchOrigin.target});
+					this.config.swipeUp({'x' : this.touchOrigin.x, 'y' : this.touchOrigin.y, 'distance' : -distance.y, 'event' : event, 'source' : this.touchOrigin.target});
 				}
 			}
 			// store the history of this touch
@@ -352,15 +491,16 @@ useful.Gestures.prototype.Single = function (parent) {
 		this.touchProgression = null;
 		this.touchOrigin = null;
 	};
+
 	this.changeWheel = function (event) {
 		// measure the wheel distance
 		var scale = 1, distance = ((window.event) ? window.event.wheelDelta / 120 : -event.detail / 3);
 		// get the coordinates from the event
 		var coords = this.parent.readEvent(event);
 		// equate wheeling up / down to zooming in / out
-		scale = (distance > 0) ? +this.cfg.increment : scale = -this.cfg.increment;
+		scale = (distance > 0) ? +this.config.increment : scale = -this.config.increment;
 		// report the zoom
-		this.cfg.pinch({
+		this.config.pinch({
 			'x' : coords.x,
 			'y' : coords.y,
 			'scale' : scale,
@@ -368,59 +508,64 @@ useful.Gestures.prototype.Single = function (parent) {
 			'source' : event.target || event.srcElement
 		});
 	};
-	// touch events
+
+	// TOUCH EVENTS
+
 	this.onStartTouch = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
-			// get event object
+			// get event elementect
 			event = event || window.event;
 			// handle the event
-			context.startTouch(event);
-			context.changeTouch(event);
+			_this.startTouch(event);
+			_this.changeTouch(event);
 		};
 	};
+
 	this.onChangeTouch = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
-			// get event object
+			// get event elementect
 			event = event || window.event;
 			// optionally cancel the default behaviour
-			context.cancelTouch(event);
+			_this.cancelTouch(event);
 			// handle the event
-			context.changeTouch(event);
+			_this.changeTouch(event);
 		};
 	};
+
 	this.onEndTouch = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
-			// get event object
+			// get event elementect
 			event = event || window.event;
 			// handle the event
-			context.endTouch(event);
+			_this.endTouch(event);
 		};
 	};
-	// mouse wheel events
+
+	// MOUSE EVENTS
+
 	this.onChangeWheel = function () {
-		// store the context
-		var context = this;
+		// store the _this
+		var _this = this;
 		// return and event handler
 		return function (event) {
-			// get event object
+			// get event elementect
 			event = event || window.event;
 			// optionally cancel the default behaviour
-			context.cancelTouch(event);
+			_this.cancelTouch(event);
 			// handle the event
-			context.changeWheel(event);
+			_this.changeWheel(event);
 		};
 	};
-	// go
-	this.start();
+
 };
 
 // return as a require.js module
@@ -441,85 +586,32 @@ var useful = useful || {};
 useful.Gestures = useful.Gestures || function () {};
 
 // extend the constructor
-useful.Gestures.prototype.init = function (cfg) {
+useful.Gestures.prototype.init = function (config) {
 	// properties
 	"use strict";
-	this.cfg = cfg;
-	this.obj = cfg.element;
-	this.paused = false;
 	// methods
-	this.start = function () {
-		// check the configuration properties
-		this.checkConfig(this.cfg);
-		// add the single touch events
-		this.single = new this.Single(this);
-		// add the multi touch events
-		this.multi = new this.Multi(this);
-		// disable the start function so it can't be started twice
-		this.init = function () {};
+	this.only = function (config) {
+		// start an instance of the script
+		return new this.Main(config, this).init();
 	};
-	this.checkConfig = function (config) {
-		// add default values for missing ones
-		config.threshold = config.threshold || 50;
-		config.increment = config.increment || 0.1;
-		// cancel all events by default
-		if (config.cancelTouch === undefined || config.cancelTouch === null) { config.cancelTouch = true; }
-		if (config.cancelGesture === undefined || config.cancelGesture === null) { config.cancelGesture = true; }
-		// add dummy event handlers for missing ones
-		config.swipeUp = config.swipeUp || function () {};
-		config.swipeLeft = config.swipeLeft || function () {};
-		config.swipeRight = config.swipeRight || function () {};
-		config.swipeDown = config.swipeDown || function () {};
-		config.drag = config.drag || function () {};
-		config.pinch = config.pinch || function () {};
-		config.twist = config.twist || function () {};
-		config.doubleTap = config.doubleTap || function () {};
-	};
-	this.readEvent = function (event) {
-		var coords = {}, offsets;
-		// try all likely methods of storing coordinates in an event
-		if (event.touches && event.touches[0]) {
-			coords.x = event.touches[0].pageX;
-			coords.y = event.touches[0].pageY;
-		} else if (event.pageX !== undefined) {
-			coords.x = event.pageX;
-			coords.y = event.pageY;
-		} else {
-			coords.x = event.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
-			coords.y = event.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
+	this.each = function (config) {
+		var _config, _context = this, instances = [];
+		// for all element
+		for (var a = 0, b = config.elements.length; a < b; a += 1) {
+			// clone the configuration
+			_config = Object.create(config);
+			// insert the current element
+			_config.element = config.elements[a];
+			// delete the list of elements from the clone
+			delete _config.elements;
+			// start a new instance of the object
+			instances[a] = new this.Main(_config, _context).init();
 		}
-		return coords;
+		// return the instances
+		return instances;
 	};
-	this.correctOffset = function (element) {
-		var offsetX = 0, offsetY = 0;
-		// if there is an offset
-		if (element.offsetParent) {
-			// follow the offsets back to the right parent element
-			while (element !== this.obj) {
-				offsetX += element.offsetLeft;
-				offsetY += element.offsetTop;
-				element = element.offsetParent;
-			}
-		}
-		// return the offsets
-		return { 'x' : offsetX, 'y' : offsetY };
-	};
-	// external API
-	this.enableDefaultTouch = function () {
-		this.cfg.cancelTouch = false;
-	};
-	this.disableDefaultTouch = function () {
-		this.cfg.cancelTouch = true;
-	};
-	this.enableDefaultGesture = function () {
-		this.cfg.cancelGesture = false;
-	};
-	this.disableDefaultGesture = function () {
-		this.cfg.cancelGesture = true;
-	};
-	// go
-	this.start();
-	return this;
+	// return a single or multiple instances of the script
+	return (config.elements) ? this.each(config) : this.only(config);
 };
 
 // return as a require.js module
@@ -992,12 +1084,186 @@ var useful = useful || {};
 useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
+useful.Catalog.prototype.Main = function (config, context) {
+	// properties
+	"use strict";
+	this.config = config;
+	this.context = context;
+	this.element = config.element;
+	this.aspect = null;
+	this.timeout = null;
+	// elementects
+	this.toolbar = null;
+	this.touch = null;
+	this.spread = null;
+	// methods
+	this.init = function () {
+		var reference = this.element.getElementsByTagName('a')[0];
+		// add the loading the indicator
+		this.element.className += ' cat-busy';
+		// adjust to the aspect ratio the first image
+		this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / this.config.split;
+		this.element.style.height = (this.element.offsetWidth * this.aspect) + 'px';
+		// build the spread elementect
+		this.spread = new this.context.Spread(this);
+		this.spread.split = this.config.split;
+		this.spread.open = this.config.open;
+		this.spread.start();
+		// build the toolbar elementect
+		this.toolbar = new this.context.Toolbar(this);
+		this.toolbar.start();
+		// start the touch controls
+		this.touch = new this.context.Touch(this);
+		this.touch.start();
+		// restore the aspect ratio after resizes
+		window.addEventListener('resize', this.onResized(), true);
+		// apply the custom styling
+		window.addEventListener('load', this.onLoaded(), true);
+		// return the object
+		return this;
+	};
+	this.styling = function () {
+		// create a custom stylesheet
+		var style = document.createElement("style");
+		var isWebkit = new RegExp('webkit', 'gi');
+		var isMsie8 = new RegExp('msie 8', 'gi');
+		if (isWebkit.test(navigator.UserAgent)) { style.appendChild(document.createTextNode("")); }
+		document.body.appendChild(style);
+		var sheet = style.sheet || style.styleSheet;
+		// add the custom styles
+		if (sheet.insertRule) {
+			sheet.insertRule(".catalog-browser button {background-color : " + this.config.colorPassive + " !important;}", 0);
+			sheet.insertRule(".catalog-browser button:hover {background-color : " + this.config.colorHover + " !important;}", 0);
+			sheet.insertRule(".catalog-browser button.disabled {background-color : " + this.config.colorDisabled + " !important;}", 0);
+		} else {
+			sheet.addRule(".catalog-browser button", "background-color : " + this.config.colorPassive + " !important;", 0);
+			sheet.addRule(".catalog-browser button:hover", "background-color : " + this.config.colorHover + " !important;", 0);
+			sheet.addRule(".catalog-browser button.disabled", "background-color : " + this.config.colorDisabled + " !important;", 0);
+			if (isMsie8.test(navigator.userAgent)) {
+				sheet.addRule(".catalog-browser .cat-page", "display : none;", 0);
+				sheet.addRule(".catalog-browser .cat-page-open", "display : block !important;", 0);
+				sheet.addRule(".catalog-browser .cat-page-close", "display : none !important;", 0);
+				sheet.addRule(".catalog-browser .cat-page-stay", "display : block !important;", 0);
+			}
+		}
+	};
+	this.update = function () {
+		// redraw the toolbar
+		this.toolbar.update();
+		// reset the touch controls
+		this.touch.update();
+		// redraw the spread
+		this.spread.update();
+	};
+	// events
+	this.onResized = function () {
+		var context = this;
+		return function () {
+			// limit the redraw frequency
+			clearTimeout(context.timeout);
+			context.timeout = setTimeout(function () {
+				// adjust to the aspect ratio
+				context.element.style.height = (context.element.offsetWidth * context.aspect) + 'px';
+			}, context.config.delay);
+		};
+	};
+	this.onLoaded = function () {
+		var context = this;
+		return function () {
+			// apply the styling
+			context.styling();
+			// remove the loading indicator
+			context.element.className = context.element.className.replace(/ cat-busy/g, '');
+		};
+	};
+	// API calls
+	this.zoomBy = function (factor) {
+		// calculate the new factor
+		var newFactor = this.spread.magnification * factor;
+		// zoom to the new factor
+		this.zoomTo(newFactor);
+	};
+	this.zoomTo = function (factor) {
+		// validate the limits
+		if (factor < 1) { factor = 1; }
+		if (factor > this.spread.max) { factor = this.spread.max; }
+		// zoom the spread
+		this.spread.zoom(factor);
+	};
+	this.moveBy = function (horizontal, vertical) {
+		// if we were given pixels convert to fraction first
+		horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.element.offsetWidth * this.config.split : horizontal;
+		vertical = (vertical % 1 === 0) ? vertical / this.spread.element.offsetHeight : vertical;
+		// apply the movement
+		var newHorizontal = this.spread.horizontal - horizontal,
+			newVertical = this.spread.vertical - vertical;
+		// move to the new position
+		this.moveTo(newHorizontal, newVertical);
+	};
+	this.moveTo = function (horizontal, vertical) {
+		// validate the limits
+		if (horizontal < 0) { horizontal = 0; }
+		if (horizontal > 1) { horizontal = 1; }
+		if (vertical < 0) { vertical = 0; }
+		if (vertical > 1) { vertical = 1; }
+		// move the spread
+		this.spread.move(horizontal, vertical);
+	};
+	this.pageBy = function (increment) {
+		// determine how much to increase the page number
+		switch (increment) {
+		// this is the next page
+		case 1 :
+			this.spread.next();
+			break;
+		// this is the previous page
+		case -1 :
+			this.spread.previous();
+			break;
+		// jump directly to any page
+		default :
+			this.pageTo(this.spread.open + increment);
+		}
+		// update the toolbar
+		this.toolbar.update();
+	};
+	this.pageTo = function (number) {
+		// get the highest page number
+		var maxNumber = this.spread.pages.length;
+		// validate the page number
+		if (number < 0) { number = 0; }
+		if (number > maxNumber) { number = maxNumber; }
+		// display the page
+		this.spread.open = number + number % this.spread.split;
+		this.spread.zoom(1);
+	};
+};
+
+// return as a require.js module
+if (typeof module !== 'undefined') {
+	exports = module.exports = useful.Catalog.Main;
+}
+
+/*
+	Source:
+	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
+
+	License:
+	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+*/
+
+// create the constructor if needed
+var useful = useful || {};
+useful.Catalog = useful.Catalog || function () {};
+
+// extend the constructor
 useful.Catalog.prototype.Page = function (parent) {
 	// properties
 	"use strict";
-	this.root = parent.parent;
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.width = null;
 	this.height = null;
 	this.left = null;
@@ -1008,21 +1274,21 @@ useful.Catalog.prototype.Page = function (parent) {
 	this.preview = null;
 	this.index = null;
 	this.bound = null;
-	// objects
+	// elementects
 	this.tiles = {};
 	this.tilesCount = 0;
 	// methods
 	this.start = function () {
 		// build a container for the page
-		this.obj = document.createElement('div');
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
+		this.element = document.createElement('div');
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
 		// add the preview to the page
 		this.preview.className = 'cat-preview';
 		this.preview.setAttribute('alt', '');
 		this.preview.onmousedown = function () { return false; };
-		this.obj.appendChild(this.preview);
+		this.element.appendChild(this.preview);
 		// add it to the parent
-		this.parent.obj.appendChild(this.obj);
+		this.parent.element.appendChild(this.element);
 	};
 	this.update = function () {
 		// generate new tiles
@@ -1035,11 +1301,11 @@ useful.Catalog.prototype.Page = function (parent) {
 		// get the visible area
 		var area = this.parent.area[this.bound];
 		// get the available space
-		var horizontal = this.obj.offsetWidth,
-			vertical = this.obj.offsetHeight;
+		var horizontal = this.element.offsetWidth,
+			vertical = this.element.offsetHeight;
 		// calculate amount of tiles in a column and a row
-		var rows = Math.round(vertical / this.parent.parent.cfg.tile),
-			cols = Math.round(horizontal / this.parent.parent.cfg.tile);
+		var rows = Math.round(vertical / this.parent.parent.config.tile),
+			cols = Math.round(horizontal / this.parent.parent.config.tile);
 		// for every row
 		for (row = 0; row < rows; row += 1) {
 			// calculate the dimensions of this row
@@ -1063,7 +1329,7 @@ useful.Catalog.prototype.Page = function (parent) {
 					// count the new tile
 					this.tilesCount = this.parent.tilesCount + 1;
 					// generate a new tile with this name and properties
-					this.tiles[name] = new this.root.Tile(this);
+					this.tiles[name] = new this.context.Tile(this);
 					this.tiles[name].left = left;
 					this.tiles[name].top = top;
 					this.tiles[name].right = right;
@@ -1078,7 +1344,7 @@ useful.Catalog.prototype.Page = function (parent) {
 		}
 	};
 	this.redraw = function () {
-		var name, min = this.parent.tilesCount - this.parent.parent.cfg.cache;
+		var name, min = this.parent.tilesCount - this.parent.parent.config.cache;
 		// for all existing tiles on this page
 		for (name in this.tiles) {
 			if (this.tiles.hasOwnProperty(name)) {
@@ -1089,7 +1355,7 @@ useful.Catalog.prototype.Page = function (parent) {
 				// else
 				} else {
 					// remove the tile
-					this.obj.removeChild(this.tiles[name].obj);
+					this.element.removeChild(this.tiles[name].element);
 					delete this.tiles[name];
 				}
 			}
@@ -1097,35 +1363,35 @@ useful.Catalog.prototype.Page = function (parent) {
 	};
 	this.open = function (direction) {
 		// change the class name
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-open cat-page-' + direction;
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-open cat-page-' + direction;
 		// update the page
 		this.update();
 	};
 	this.close = function (direction) {
 		// change the class name
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
 	};
 	this.stay = function (direction) {
-		// allow the object to render
-		this.obj.style.display = 'block';
+		// allow the elementect to render
+		this.element.style.display = 'block';
 		// change the class name
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-stay cat-page-' + direction;
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-stay cat-page-' + direction;
 		// update the page
 		this.update();
 	};
 	this.show = function () {
-		// allow the object to render
-		this.obj.style.display = 'block';
+		// allow the elementect to render
+		this.element.style.display = 'block';
 		// change the class name
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-open';
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-open';
 		// update the page
 		this.update();
 	};
 	this.hide = function () {
-		// if the object is nowhere near the open page, it's safe to stop it from rendering
-		this.obj.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
+		// if the elementect is nowhere near the open page, it's safe to stop it from rendering
+		this.element.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
 		// change the class name
-		this.obj.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
+		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
 	};
 	// events
 };
@@ -1152,7 +1418,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.wrapper = null;
 	this.horizontal = 0.5;
 	this.vertical = 0.5;
@@ -1166,20 +1434,20 @@ useful.Catalog.prototype.Spread = function (parent) {
 	this.timeout = null;
 	this.tilesCount = 0;
 	this.busy = false;
-	// objects
+	// elementects
 	this.pages = [];
 	// methods
 	this.start = function () {
 		// build a container for the pages
-		this.obj = document.createElement('div');
-		this.obj.className = 'cat-spread cat-split-' + this.split;
+		this.element = document.createElement('div');
+		this.element.className = 'cat-spread cat-split-' + this.split;
 		// build a wrapper for the container
 		this.wrapper = document.createElement('div');
 		this.wrapper.className = 'cat-wrapper';
 		// create all the pages
-		var assets = this.parent.obj.getElementsByTagName('a');
+		var assets = this.parent.element.getElementsByTagName('a');
 		for (var a = 0, b = assets.length; a < b; a += 1) {
-			this.pages[a] = new this.parent.Page(this);
+			this.pages[a] = new this.context.Page(this);
 			this.pages[a].source = assets[a].getAttribute('href');
 			this.pages[a].width = parseInt(assets[a].getAttribute('data-width'), 10);
 			this.pages[a].height = parseInt(assets[a].getAttribute('data-height'), 10);
@@ -1193,12 +1461,12 @@ useful.Catalog.prototype.Spread = function (parent) {
 			this.pages[a].start();
 		}
 		// clear the parent
-		this.parent.obj.innerHTML = '';
+		this.parent.element.innerHTML = '';
 		// add the container to the parent
-		this.wrapper.appendChild(this.obj);
-		this.parent.obj.appendChild(this.wrapper);
+		this.wrapper.appendChild(this.element);
+		this.parent.element.appendChild(this.wrapper);
 		// keep track of scrolling
-		this.parent.obj.addEventListener('scroll', this.onMove(), true);
+		this.parent.element.addEventListener('scroll', this.onMove(), true);
 		// apply the starting settings
 		this.zoom(this.magnification);
 	};
@@ -1300,13 +1568,13 @@ useful.Catalog.prototype.Spread = function (parent) {
 	};
 	this.zoom = function (magnification) {
 		// apply the zoom factor
-		this.obj.style.width = (magnification * 100) + '%';
-		this.obj.style.height = (magnification * 100) + '%';
-//			this.obj.style.width = '100%';
-//			this.obj.style.height = '100%';
-//			this.obj.style.transform = 'scale(' + magnification + ')';
+		this.element.style.width = (magnification * 100) + '%';
+		this.element.style.height = (magnification * 100) + '%';
+//			this.element.style.width = '100%';
+//			this.element.style.height = '100%';
+//			this.element.style.transform = 'scale(' + magnification + ')';
 		// show or hide the scroll bars
-		this.obj.parentNode.style.overflow = (magnification === 1) ? 'hidden' : 'auto';
+		this.element.parentNode.style.overflow = (magnification === 1) ? 'hidden' : 'auto';
 		// store the magnification
 		this.magnification = magnification;
 		// re-adjust the position
@@ -1318,8 +1586,8 @@ useful.Catalog.prototype.Spread = function (parent) {
 		horizontal = horizontal || this.horizontal;
 		vertical = vertical || this.vertical;
 		// set the position of the spread
-		this.wrapper.scrollLeft = horizontal * (this.obj.offsetWidth - this.parent.obj.offsetWidth);
-		this.wrapper.scrollTop = vertical * (this.obj.offsetHeight - this.parent.obj.offsetHeight);
+		this.wrapper.scrollLeft = horizontal * (this.element.offsetWidth - this.parent.element.offsetWidth);
+		this.wrapper.scrollTop = vertical * (this.element.offsetHeight - this.parent.element.offsetHeight);
 		// store the position
 		this.horizontal = horizontal;
 		this.vertical = vertical;
@@ -1327,7 +1595,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		clearTimeout(this.afterMove);
 		this.afterMove = setTimeout(function () {
 			_this.parent.update();
-		}, _this.parent.cfg.duration);
+		}, _this.parent.config.duration);
 	};
 	// events
 	this.onMove = function () {
@@ -1337,14 +1605,14 @@ useful.Catalog.prototype.Spread = function (parent) {
 			clearTimeout(_this.timeout);
 			_this.timeout = setTimeout(function () {
 				// note the new position
-				var horizontal = _this.wrapper.scrollLeft / (_this.obj.offsetWidth - _this.wrapper.offsetWidth),
-					vertical = _this.wrapper.scrollTop / (_this.obj.offsetHeight - _this.wrapper.offsetHeight);
+				var horizontal = _this.wrapper.scrollLeft / (_this.element.offsetWidth - _this.wrapper.offsetWidth),
+					vertical = _this.wrapper.scrollTop / (_this.element.offsetHeight - _this.wrapper.offsetHeight);
 				// validate and store the new position
 				_this.horizontal = (isNaN(horizontal)) ? 0.5 : horizontal;
 				_this.vertical = (isNaN(vertical)) ? 0.5 : vertical;
 				// ask the spread to update
 				_this.update();
-			}, _this.parent.cfg.delay);
+			}, _this.parent.config.delay);
 		};
 	};
 };
@@ -1371,7 +1639,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.img = null;
 	this.left = null;
 	this.top = null;
@@ -1384,18 +1654,18 @@ useful.Catalog.prototype.Tile = function (parent) {
 	// methods
 	this.start = function () {
 		// construct the tile
-		this.obj = document.createElement('div');
-		this.obj.className = 'cat-tile';
-		this.obj.style.left = (this.left * 100) + '%';
-		this.obj.style.top = (this.top * 100) + '%';
-		this.obj.style.right = (100 - this.right * 100) + '%';
-		this.obj.style.bottom = (100 - this.bottom * 100) + '%';
-		this.obj.style.zIndex = Math.round(this.magnification * 100);
+		this.element = document.createElement('div');
+		this.element.className = 'cat-tile';
+		this.element.style.left = (this.left * 100) + '%';
+		this.element.style.top = (this.top * 100) + '%';
+		this.element.style.right = (100 - this.right * 100) + '%';
+		this.element.style.bottom = (100 - this.bottom * 100) + '%';
+		this.element.style.zIndex = Math.round(this.magnification * 100);
 		// add the image
 		this.img = document.createElement('img');
 		this.img.style.visibility = 'hidden';
 		this.img.onload = this.onLoaded();
-		this.img.src = this.parent.parent.parent.cfg.imageslice
+		this.img.src = this.parent.parent.parent.config.imageslice
 			.replace(/{src}/g, this.parent.source)
 			.replace(/{width}/g, Math.round(this.width))
 			.replace(/{height}/g, Math.round(this.height))
@@ -1403,16 +1673,16 @@ useful.Catalog.prototype.Tile = function (parent) {
 			.replace(/{top}/g, this.top)
 			.replace(/{right}/g, this.right)
 			.replace(/{bottom}/g, this.bottom);
-		this.obj.onmousedown = function () { return false; };
-		this.obj.appendChild(this.img);
+		this.element.onmousedown = function () { return false; };
+		this.element.appendChild(this.img);
 		// add the tile to the page
-		this.parent.obj.appendChild(this.obj);
+		this.parent.element.appendChild(this.element);
 	};
 	this.update = function () {
 		var area = this.parent.parent.area[this.parent.bound],
 			magnification = this.parent.parent.magnification;
 		// if this tile is at or below the current magnification and inside the visible area
-		this.obj.style.display = (
+		this.element.style.display = (
 			(this.magnification <= magnification) &&
 			((this.left >= area.left  && this.left <= area.right) || (this.right >= area.left && this.right <= area.right)) &&
 			((this.top >= area.top && this.top <= area.bottom) || (this.bottom >= area.top && this.bottom <= area.bottom))
@@ -1447,6 +1717,8 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
+	this.config = parent.config;
+	this.context = parent.context;
 	this.menu = null;
 	this.elements = {};
 	// methods
@@ -1461,10 +1733,10 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		// add the zoom controls to the toolbar
 		this.addZoomControls();
 		// add the menu to the parent element
-		this.parent.obj.appendChild(this.menu);
+		this.parent.element.appendChild(this.menu);
 	};
 	this.update = function () {
-		// get the spread object
+		// get the spread elementect
 		var spread = this.parent.spread;
 		// update the page number
 		this.elements.pageNumberInput.value = (spread.open < spread.pages.length) ? spread.open + 1 : spread.pages.length;
@@ -1575,7 +1847,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			_this.zoomInRepeat = setInterval(function () {
 				// increase the zoom factor
 				_this.parent.zoomBy(1.1);
-			}, Math.round(_this.parent.cfg.delay * 0.75));
+			}, Math.round(_this.parent.config.delay * 0.75));
 			// cancel the click
 			event.preventDefault();
 		};
@@ -1596,7 +1868,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			_this.zoomOutRepeat = setInterval(function () {
 				// decrease the zoom factor
 				_this.parent.zoomBy(0.9);
-			}, Math.round(_this.parent.cfg.delay * 0.75));
+			}, Math.round(_this.parent.config.delay * 0.75));
 			// cancel the click
 			event.preventDefault();
 		};
@@ -1634,13 +1906,15 @@ useful.Catalog.prototype.Touch = function (parent) {
 	// properties
 	"use strict";
 	this.parent = parent;
-	this.obj = null;
+	this.config = parent.config;
+	this.context = parent.context;
+	this.element = null;
 	this.hasTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
 	// methods
 	this.start = function () {
 		// start touch controls
 		this.gestures = new useful.Gestures().init({
-			'element' : this.parent.obj,
+			'element' : this.parent.element,
 			'threshold' : 100,
 			'increment' : 0.1,
 			'swipeLeft' : this.onSwipeLeft(),
@@ -1709,161 +1983,32 @@ var useful = useful || {};
 useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
-useful.Catalog.prototype.init = function (cfg) {
+useful.Catalog.prototype.init = function (config) {
 	// properties
 	"use strict";
-	this.cfg = cfg;
-	this.obj = cfg.element;
-	this.aspect = null;
-	this.timeout = null;
-	// objects
-	this.toolbar = null;
-	this.touch = null;
-	this.spread = null;
 	// methods
-	this.start = function () {
-		var reference = this.obj.getElementsByTagName('a')[0];
-		// add the loading the indicator
-		this.obj.className += ' cat-busy';
-		// adjust to the aspect ratio the first image
-		this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / this.cfg.split;
-		this.obj.style.height = (this.obj.offsetWidth * this.aspect) + 'px';
-		// build the spread object
-		this.spread = new this.Spread(this);
-		this.spread.split = this.cfg.split;
-		this.spread.open = this.cfg.open;
-		this.spread.start();
-		// build the toolbar object
-		this.toolbar = new this.Toolbar(this);
-		this.toolbar.start();
-		// start the touch controls
-		this.touch = new this.Touch(this);
-		this.touch.start();
-		// restore the aspect ratio after resizes
-		window.addEventListener('resize', this.onResized(), true);
-		// apply the custom styling
-		window.addEventListener('load', this.onLoaded(), true);
-		// disable the start function so it can't be started twice
-		this.init = function () {};
+	this.only = function (config) {
+		// start an instance of the script
+		return new this.Main(config, this).init();
 	};
-	this.styling = function () {
-		// create a custom stylesheet
-		var style = document.createElement("style");
-		var isWebkit = new RegExp('webkit', 'gi');
-		var isMsie8 = new RegExp('msie 8', 'gi');
-		if (isWebkit.test(navigator.UserAgent)) { style.appendChild(document.createTextNode("")); }
-		document.body.appendChild(style);
-		var sheet = style.sheet || style.styleSheet;
-		// add the custom styles
-		if (sheet.insertRule) {
-			sheet.insertRule(".catalog-browser button {background-color : " + this.cfg.colorPassive + " !important;}", 0);
-			sheet.insertRule(".catalog-browser button:hover {background-color : " + this.cfg.colorHover + " !important;}", 0);
-			sheet.insertRule(".catalog-browser button.disabled {background-color : " + this.cfg.colorDisabled + " !important;}", 0);
-		} else {
-			sheet.addRule(".catalog-browser button", "background-color : " + this.cfg.colorPassive + " !important;", 0);
-			sheet.addRule(".catalog-browser button:hover", "background-color : " + this.cfg.colorHover + " !important;", 0);
-			sheet.addRule(".catalog-browser button.disabled", "background-color : " + this.cfg.colorDisabled + " !important;", 0);
-			if (isMsie8.test(navigator.userAgent)) {
-				sheet.addRule(".catalog-browser .cat-page", "display : none;", 0);
-				sheet.addRule(".catalog-browser .cat-page-open", "display : block !important;", 0);
-				sheet.addRule(".catalog-browser .cat-page-close", "display : none !important;", 0);
-				sheet.addRule(".catalog-browser .cat-page-stay", "display : block !important;", 0);
-			}
+	this.each = function (config) {
+		var _config, _context = this, instances = [];
+		// for all element
+		for (var a = 0, b = config.elements.length; a < b; a += 1) {
+			// clone the configuration
+			_config = Object.create(config);
+			// insert the current element
+			_config.element = config.elements[a];
+			// delete the list of elements from the clone
+			delete _config.elements;
+			// start a new instance of the object
+			instances[a] = new this.Main(_config, _context).init();
 		}
+		// return the instances
+		return instances;
 	};
-	this.update = function () {
-		// redraw the toolbar
-		this.toolbar.update();
-		// reset the touch controls
-		this.touch.update();
-		// redraw the spread
-		this.spread.update();
-	};
-	// events
-	this.onResized = function () {
-		var context = this;
-		return function () {
-			// limit the redraw frequency
-			clearTimeout(context.timeout);
-			context.timeout = setTimeout(function () {
-				// adjust to the aspect ratio
-				context.obj.style.height = (context.obj.offsetWidth * context.aspect) + 'px';
-			}, context.cfg.delay);
-		};
-	};
-	this.onLoaded = function () {
-		var context = this;
-		return function () {
-			// apply the styling
-			context.styling();
-			// remove the loading indicator
-			context.obj.className = context.obj.className.replace(/ cat-busy/g, '');
-		};
-	};
-	// API calls
-	this.zoomBy = function (factor) {
-		// calculate the new factor
-		var newFactor = this.spread.magnification * factor;
-		// zoom to the new factor
-		this.zoomTo(newFactor);
-	};
-	this.zoomTo = function (factor) {
-		// validate the limits
-		if (factor < 1) { factor = 1; }
-		if (factor > this.spread.max) { factor = this.spread.max; }
-		// zoom the spread
-		this.spread.zoom(factor);
-	};
-	this.moveBy = function (horizontal, vertical) {
-		// if we were given pixels convert to fraction first
-		horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.obj.offsetWidth * this.cfg.split : horizontal;
-		vertical = (vertical % 1 === 0) ? vertical / this.spread.obj.offsetHeight : vertical;
-		// apply the movement
-		var newHorizontal = this.spread.horizontal - horizontal,
-			newVertical = this.spread.vertical - vertical;
-		// move to the new position
-		this.moveTo(newHorizontal, newVertical);
-	};
-	this.moveTo = function (horizontal, vertical) {
-		// validate the limits
-		if (horizontal < 0) { horizontal = 0; }
-		if (horizontal > 1) { horizontal = 1; }
-		if (vertical < 0) { vertical = 0; }
-		if (vertical > 1) { vertical = 1; }
-		// move the spread
-		this.spread.move(horizontal, vertical);
-	};
-	this.pageBy = function (increment) {
-		// determine how much to increase the page number
-		switch (increment) {
-		// this is the next page
-		case 1 :
-			this.spread.next();
-			break;
-		// this is the previous page
-		case -1 :
-			this.spread.previous();
-			break;
-		// jump directly to any page
-		default :
-			this.pageTo(this.spread.open + increment);
-		}
-		// update the toolbar
-		this.toolbar.update();
-	};
-	this.pageTo = function (number) {
-		// get the highest page number
-		var maxNumber = this.spread.pages.length;
-		// validate the page number
-		if (number < 0) { number = 0; }
-		if (number > maxNumber) { number = maxNumber; }
-		// display the page
-		this.spread.open = number + number % this.spread.split;
-		this.spread.zoom(1);
-	};
-	// go
-	this.start();
-	return this;
+	// return a single or multiple instances of the script
+	return (config.elements) ? this.each(config) : this.only(config);
 };
 
 // return as a require.js module
