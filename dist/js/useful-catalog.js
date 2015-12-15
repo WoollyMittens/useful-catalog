@@ -587,13 +587,18 @@ useful.Gestures = useful.Gestures || function () {};
 
 // extend the constructor
 useful.Gestures.prototype.init = function (config) {
-	// properties
+
+	// PROPERTIES
+	
 	"use strict";
-	// methods
+
+	// METHODS
+	
 	this.only = function (config) {
 		// start an instance of the script
 		return new this.Main(config, this).init();
 	};
+	
 	this.each = function (config) {
 		var _config, _context = this, instances = [];
 		// for all element
@@ -610,8 +615,11 @@ useful.Gestures.prototype.init = function (config) {
 		// return the instances
 		return instances;
 	};
-	// return a single or multiple instances of the script
+
+	// START
+
 	return (config.elements) ? this.each(config) : this.only(config);
+
 };
 
 // return as a require.js module
@@ -630,272 +638,417 @@ if (typeof module !== 'undefined') {
 // public object
 var useful = useful || {};
 
-(function(){
+(function() {
 
-	// Invoke strict mode
-	"use strict";
+  // Invoke strict mode
+  "use strict";
 
-	// Create a private object for this library
-	useful.polyfills = {
+  // Create a private object for this library
+  useful.polyfills = {
 
-		// enabled the use of HTML5 elements in Internet Explorer
-		html5 : function () {
-			var a, b, elementsList;
-			elementsList = ['section', 'nav', 'article', 'aside', 'hgroup', 'header', 'footer', 'dialog', 'mark', 'dfn', 'time', 'progress', 'meter', 'ruby', 'rt', 'rp', 'ins', 'del', 'figure', 'figcaption', 'video', 'audio', 'source', 'canvas', 'datalist', 'keygen', 'output', 'details', 'datagrid', 'command', 'bb', 'menu', 'legend'];
-			if (navigator.userAgent.match(/msie/gi)) {
-				for (a = 0 , b = elementsList.length; a < b; a += 1) {
-					document.createElement(elementsList[a]);
-				}
-			}
-		},
+    // enabled the use of HTML5 elements in Internet Explorer
+    html5: function() {
+      var a, b, elementsList = ['section', 'nav', 'article', 'aside', 'hgroup', 'header', 'footer', 'dialog', 'mark', 'dfn', 'time', 'progress', 'meter', 'ruby', 'rt', 'rp', 'ins', 'del', 'figure', 'figcaption', 'video', 'audio', 'source', 'canvas', 'datalist', 'keygen', 'output', 'details', 'datagrid', 'command', 'bb', 'menu', 'legend'];
+      if (navigator.userAgent.match(/msie/gi)) {
+        for (a = 0, b = elementsList.length; a < b; a += 1) {
+          document.createElement(elementsList[a]);
+        }
+      }
+    },
 
-		// allow array.indexOf in older browsers
-		arrayIndexOf : function () {
-			if (!Array.prototype.indexOf) {
-				Array.prototype.indexOf = function (obj, start) {
-					for (var i = (start || 0), j = this.length; i < j; i += 1) {
-						if (this[i] === obj) { return i; }
-					}
-					return -1;
-				};
-			}
-		},
+    // allow array.indexOf in older browsers
+    arrayIndexOf: function() {
+      if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function(obj, start) {
+          for (var i = (start || 0), j = this.length; i < j; i += 1) {
+            if (this[i] === obj) {
+              return i;
+            }
+          }
+          return -1;
+        };
+      }
+    },
 
-		// allow document.querySelectorAll (https://gist.github.com/connrs/2724353)
-		querySelectorAll : function () {
-			if (!document.querySelectorAll) {
-				document.querySelectorAll = function (a) {
-					var b = document, c = b.documentElement.firstChild, d = b.createElement("STYLE");
-					return c.appendChild(d), b.__qsaels = [], d.styleSheet.cssText = a + "{x:expression(document.__qsaels.push(this))}", window.scrollBy(0, 0), b.__qsaels;
-				};
-			}
-		},
+    // allow array.isArray in older browsers
+    arrayIsArray: function() {
+      if (!Array.isArray) {
+        Array.isArray = function(arg) {
+          return Object.prototype.toString.call(arg) === '[object Array]';
+        };
+      }
+    },
 
-		// allow addEventListener (https://gist.github.com/jonathantneal/3748027)
-		addEventListener : function () {
-			!window.addEventListener && (function (WindowPrototype, DocumentPrototype, ElementPrototype, addEventListener, removeEventListener, dispatchEvent, registry) {
-				WindowPrototype[addEventListener] = DocumentPrototype[addEventListener] = ElementPrototype[addEventListener] = function (type, listener) {
-					var target = this;
-					registry.unshift([target, type, listener, function (event) {
-						event.currentTarget = target;
-						event.preventDefault = function () { event.returnValue = false; };
-						event.stopPropagation = function () { event.cancelBubble = true; };
-						event.target = event.srcElement || target;
-						listener.call(target, event);
-					}]);
-					this.attachEvent("on" + type, registry[0][3]);
-				};
-				WindowPrototype[removeEventListener] = DocumentPrototype[removeEventListener] = ElementPrototype[removeEventListener] = function (type, listener) {
-					for (var index = 0, register; register = registry[index]; ++index) {
-						if (register[0] == this && register[1] == type && register[2] == listener) {
-							return this.detachEvent("on" + type, registry.splice(index, 1)[0][3]);
-						}
-					}
-				};
-				WindowPrototype[dispatchEvent] = DocumentPrototype[dispatchEvent] = ElementPrototype[dispatchEvent] = function (eventObject) {
-					return this.fireEvent("on" + eventObject.type, eventObject);
-				};
-			})(Window.prototype, HTMLDocument.prototype, Element.prototype, "addEventListener", "removeEventListener", "dispatchEvent", []);
-		},
+    // allow array.map in older browsers (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
+    arrayMap: function() {
 
-		// allow console.log
-		consoleLog : function () {
-			var overrideTest = new RegExp('console-log', 'i');
-			if (!window.console || overrideTest.test(document.querySelectorAll('html')[0].className)) {
-				window.console = {};
-				window.console.log = function () {
-					// if the reporting panel doesn't exist
-					var a, b, messages = '', reportPanel = document.getElementById('reportPanel');
-					if (!reportPanel) {
-						// create the panel
-						reportPanel = document.createElement('DIV');
-						reportPanel.id = 'reportPanel';
-						reportPanel.style.background = '#fff none';
-						reportPanel.style.border = 'solid 1px #000';
-						reportPanel.style.color = '#000';
-						reportPanel.style.fontSize = '12px';
-						reportPanel.style.padding = '10px';
-						reportPanel.style.position = (navigator.userAgent.indexOf('MSIE 6') > -1) ? 'absolute' : 'fixed';
-						reportPanel.style.right = '10px';
-						reportPanel.style.bottom = '10px';
-						reportPanel.style.width = '180px';
-						reportPanel.style.height = '320px';
-						reportPanel.style.overflow = 'auto';
-						reportPanel.style.zIndex = '100000';
-						reportPanel.innerHTML = '&nbsp;';
-						// store a copy of this node in the move buffer
-						document.body.appendChild(reportPanel);
-					}
-					// truncate the queue
-					var reportString = (reportPanel.innerHTML.length < 1000) ? reportPanel.innerHTML : reportPanel.innerHTML.substring(0, 800);
-					// process the arguments
-					for (a = 0, b = arguments.length; a < b; a += 1) {
-						messages += arguments[a] + '<br/>';
-					}
-					// add a break after the message
-					messages += '<hr/>';
-					// output the queue to the panel
-					reportPanel.innerHTML = messages + reportString;
-				};
-			}
-		},
+      // Production steps of ECMA-262, Edition 5, 15.4.4.19
+      // Reference: http://es5.github.io/#x15.4.4.19
+      if (!Array.prototype.map) {
 
-		// allows Object.create (https://gist.github.com/rxgx/1597825)
-		objectCreate : function () {
-			if (typeof Object.create !== "function") {
-				Object.create = function (original) {
-					function Clone() {}
-					Clone.prototype = original;
-					return new Clone();
-				};
-			}
-		},
+        Array.prototype.map = function(callback, thisArg) {
 
-		// allows String.trim (https://gist.github.com/eliperelman/1035982)
-		stringTrim : function () {
-			if (!String.prototype.trim) {
-				String.prototype.trim = function () { return this.replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, ''); };
-			}
-			if (!String.prototype.ltrim) {
-				String.prototype.ltrim = function () { return this.replace(/^\s+/, ''); };
-			}
-			if (!String.prototype.rtrim) {
-				String.prototype.rtrim = function () { return this.replace(/\s+$/, ''); };
-			}
-			if (!String.prototype.fulltrim) {
-				String.prototype.fulltrim = function () { return this.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g, '').replace(/\s+/g, ' '); };
-			}
-		},
+          var T, A, k;
 
-		// allows localStorage support
-		localStorage : function () {
-			if (!window.localStorage) {
-				if (/MSIE 8|MSIE 7|MSIE 6/i.test(navigator.userAgent)){
-					window.localStorage = {
-						getItem: function(sKey) {
-							if (!sKey || !this.hasOwnProperty(sKey)) {
-								return null;
-							}
-							return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
-						},
-						key: function(nKeyId) {
-							return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
-						},
-						setItem: function(sKey, sValue) {
-							if (!sKey) {
-								return;
-							}
-							document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
-							this.length = document.cookie.match(/\=/g).length;
-						},
-						length: 0,
-						removeItem: function(sKey) {
-							if (!sKey || !this.hasOwnProperty(sKey)) {
-								return;
-							}
-							document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-							this.length--;
-						},
-						hasOwnProperty: function(sKey) {
-							return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
-						}
-					};
-					window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
-				} else {
-				    Object.defineProperty(window, "localStorage", new(function() {
-				        var aKeys = [],
-				            oStorage = {};
-				        Object.defineProperty(oStorage, "getItem", {
-				            value: function(sKey) {
-				                return sKey ? this[sKey] : null;
-				            },
-				            writable: false,
-				            configurable: false,
-				            enumerable: false
-				        });
-				        Object.defineProperty(oStorage, "key", {
-				            value: function(nKeyId) {
-				                return aKeys[nKeyId];
-				            },
-				            writable: false,
-				            configurable: false,
-				            enumerable: false
-				        });
-				        Object.defineProperty(oStorage, "setItem", {
-				            value: function(sKey, sValue) {
-				                if (!sKey) {
-				                    return;
-				                }
-				                document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
-				            },
-				            writable: false,
-				            configurable: false,
-				            enumerable: false
-				        });
-				        Object.defineProperty(oStorage, "length", {
-				            get: function() {
-				                return aKeys.length;
-				            },
-				            configurable: false,
-				            enumerable: false
-				        });
-				        Object.defineProperty(oStorage, "removeItem", {
-				            value: function(sKey) {
-				                if (!sKey) {
-				                    return;
-				                }
-				                document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-				            },
-				            writable: false,
-				            configurable: false,
-				            enumerable: false
-				        });
-				        this.get = function() {
-				            var iThisIndx;
-				            for (var sKey in oStorage) {
-				                iThisIndx = aKeys.indexOf(sKey);
-				                if (iThisIndx === -1) {
-				                    oStorage.setItem(sKey, oStorage[sKey]);
-				                } else {
-				                    aKeys.splice(iThisIndx, 1);
-				                }
-				                delete oStorage[sKey];
-				            }
-				            for (aKeys; aKeys.length > 0; aKeys.splice(0, 1)) {
-				                oStorage.removeItem(aKeys[0]);
-				            }
-				            for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
-				                aCouple = aCouples[nIdx].split(/\s*=\s*/);
-				                if (aCouple.length > 1) {
-				                    oStorage[iKey = unescape(aCouple[0])] = unescape(aCouple[1]);
-				                    aKeys.push(iKey);
-				                }
-				            }
-				            return oStorage;
-				        };
-				        this.configurable = false;
-				        this.enumerable = true;
-				    })());
-				}
-			}
-		}
+          if (this == null) {
+            throw new TypeError(' this is null or not defined');
+          }
 
-	};
+          // 1. Let O be the result of calling ToObject passing the |this|
+          //    value as the argument.
+          var O = Object(this);
 
-	// startup
-	useful.polyfills.html5();
-	useful.polyfills.arrayIndexOf();
-	useful.polyfills.querySelectorAll();
-	useful.polyfills.addEventListener();
-	useful.polyfills.consoleLog();
-	useful.polyfills.objectCreate();
-	useful.polyfills.stringTrim();
-	useful.polyfills.localStorage();
+          // 2. Let lenValue be the result of calling the Get internal
+          //    method of O with the argument "length".
+          // 3. Let len be ToUint32(lenValue).
+          var len = O.length >>> 0;
 
-	// return as a require.js module
-	if (typeof module !== 'undefined') {
-		exports = module.exports = useful.polyfills;
-	}
+          // 4. If IsCallable(callback) is false, throw a TypeError exception.
+          // See: http://es5.github.com/#x9.11
+          if (typeof callback !== 'function') {
+            throw new TypeError(callback + ' is not a function');
+          }
+
+          // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+          if (arguments.length > 1) {
+            T = thisArg;
+          }
+
+          // 6. Let A be a new array created as if by the expression new Array(len)
+          //    where Array is the standard built-in constructor with that name and
+          //    len is the value of len.
+          A = new Array(len);
+
+          // 7. Let k be 0
+          k = 0;
+
+          // 8. Repeat, while k < len
+          while (k < len) {
+
+            var kValue, mappedValue;
+
+            // a. Let Pk be ToString(k).
+            //   This is implicit for LHS operands of the in operator
+            // b. Let kPresent be the result of calling the HasProperty internal
+            //    method of O with argument Pk.
+            //   This step can be combined with c
+            // c. If kPresent is true, then
+            if (k in O) {
+
+              // i. Let kValue be the result of calling the Get internal
+              //    method of O with argument Pk.
+              kValue = O[k];
+
+              // ii. Let mappedValue be the result of calling the Call internal
+              //     method of callback with T as the this value and argument
+              //     list containing kValue, k, and O.
+              mappedValue = callback.call(T, kValue, k, O);
+
+              // iii. Call the DefineOwnProperty internal method of A with arguments
+              // Pk, Property Descriptor
+              // { Value: mappedValue,
+              //   Writable: true,
+              //   Enumerable: true,
+              //   Configurable: true },
+              // and false.
+
+              // In browsers that support Object.defineProperty, use the following:
+              // Object.defineProperty(A, k, {
+              //   value: mappedValue,
+              //   writable: true,
+              //   enumerable: true,
+              //   configurable: true
+              // });
+
+              // For best browser support, use the following:
+              A[k] = mappedValue;
+            }
+            // d. Increase k by 1.
+            k++;
+          }
+
+          // 9. return A
+          return A;
+        };
+      }
+
+    },
+
+    // allow document.querySelectorAll (https://gist.github.com/connrs/2724353)
+    querySelectorAll: function() {
+      if (!document.querySelectorAll) {
+        document.querySelectorAll = function(a) {
+          var b = document,
+            c = b.documentElement.firstChild,
+            d = b.createElement("STYLE");
+          return c.appendChild(d), b.__qsaels = [], d.styleSheet.cssText = a + "{x:expression(document.__qsaels.push(this))}", window.scrollBy(0, 0), b.__qsaels;
+        };
+      }
+    },
+
+    // allow addEventListener (https://gist.github.com/jonathantneal/3748027)
+    addEventListener: function() {
+      !window.addEventListener && (function(WindowPrototype, DocumentPrototype, ElementPrototype, addEventListener, removeEventListener, dispatchEvent, registry) {
+        WindowPrototype[addEventListener] = DocumentPrototype[addEventListener] = ElementPrototype[addEventListener] = function(type, listener) {
+          var target = this;
+          registry.unshift([target, type, listener, function(event) {
+            event.currentTarget = target;
+            event.preventDefault = function() {
+              event.returnValue = false;
+            };
+            event.stopPropagation = function() {
+              event.cancelBubble = true;
+            };
+            event.target = event.srcElement || target;
+            listener.call(target, event);
+          }]);
+          this.attachEvent("on" + type, registry[0][3]);
+        };
+        WindowPrototype[removeEventListener] = DocumentPrototype[removeEventListener] = ElementPrototype[removeEventListener] = function(type, listener) {
+          for (var index = 0, register; register = registry[index]; ++index) {
+            if (register[0] == this && register[1] == type && register[2] == listener) {
+              return this.detachEvent("on" + type, registry.splice(index, 1)[0][3]);
+            }
+          }
+        };
+        WindowPrototype[dispatchEvent] = DocumentPrototype[dispatchEvent] = ElementPrototype[dispatchEvent] = function(eventObject) {
+          return this.fireEvent("on" + eventObject.type, eventObject);
+        };
+      })(Window.prototype, HTMLDocument.prototype, Element.prototype, "addEventListener", "removeEventListener", "dispatchEvent", []);
+    },
+
+    // allow console.log
+    consoleLog: function() {
+      var overrideTest = new RegExp('console-log', 'i');
+      if (!window.console || overrideTest.test(document.querySelectorAll('html')[0].className)) {
+        window.console = {};
+        window.console.log = function() {
+          // if the reporting panel doesn't exist
+          var a, b, messages = '',
+            reportPanel = document.getElementById('reportPanel');
+          if (!reportPanel) {
+            // create the panel
+            reportPanel = document.createElement('DIV');
+            reportPanel.id = 'reportPanel';
+            reportPanel.style.background = '#fff none';
+            reportPanel.style.border = 'solid 1px #000';
+            reportPanel.style.color = '#000';
+            reportPanel.style.fontSize = '12px';
+            reportPanel.style.padding = '10px';
+            reportPanel.style.position = (navigator.userAgent.indexOf('MSIE 6') > -1) ? 'absolute' : 'fixed';
+            reportPanel.style.right = '10px';
+            reportPanel.style.bottom = '10px';
+            reportPanel.style.width = '180px';
+            reportPanel.style.height = '320px';
+            reportPanel.style.overflow = 'auto';
+            reportPanel.style.zIndex = '100000';
+            reportPanel.innerHTML = '&nbsp;';
+            // store a copy of this node in the move buffer
+            document.body.appendChild(reportPanel);
+          }
+          // truncate the queue
+          var reportString = (reportPanel.innerHTML.length < 1000) ? reportPanel.innerHTML : reportPanel.innerHTML.substring(0, 800);
+          // process the arguments
+          for (a = 0, b = arguments.length; a < b; a += 1) {
+            messages += arguments[a] + '<br/>';
+          }
+          // add a break after the message
+          messages += '<hr/>';
+          // output the queue to the panel
+          reportPanel.innerHTML = messages + reportString;
+        };
+      }
+    },
+
+    // allows Object.create (https://gist.github.com/rxgx/1597825)
+    objectCreate: function() {
+      if (typeof Object.create !== "function") {
+        Object.create = function(original) {
+          function Clone() {}
+          Clone.prototype = original;
+          return new Clone();
+        };
+      }
+    },
+
+    // allows String.trim (https://gist.github.com/eliperelman/1035982)
+    stringTrim: function() {
+      if (!String.prototype.trim) {
+        String.prototype.trim = function() {
+          return this.replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
+        };
+      }
+      if (!String.prototype.ltrim) {
+        String.prototype.ltrim = function() {
+          return this.replace(/^\s+/, '');
+        };
+      }
+      if (!String.prototype.rtrim) {
+        String.prototype.rtrim = function() {
+          return this.replace(/\s+$/, '');
+        };
+      }
+      if (!String.prototype.fulltrim) {
+        String.prototype.fulltrim = function() {
+          return this.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g, '').replace(/\s+/g, ' ');
+        };
+      }
+    },
+
+    // allows localStorage support
+    localStorage: function() {
+      if (!window.localStorage) {
+        if (/MSIE 8|MSIE 7|MSIE 6/i.test(navigator.userAgent)) {
+          window.localStorage = {
+            getItem: function(sKey) {
+              if (!sKey || !this.hasOwnProperty(sKey)) {
+                return null;
+              }
+              return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+            },
+            key: function(nKeyId) {
+              return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
+            },
+            setItem: function(sKey, sValue) {
+              if (!sKey) {
+                return;
+              }
+              document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+              this.length = document.cookie.match(/\=/g).length;
+            },
+            length: 0,
+            removeItem: function(sKey) {
+              if (!sKey || !this.hasOwnProperty(sKey)) {
+                return;
+              }
+              document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+              this.length--;
+            },
+            hasOwnProperty: function(sKey) {
+              return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+            }
+          };
+          window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
+        } else {
+          Object.defineProperty(window, "localStorage", new(function() {
+            var aKeys = [],
+              oStorage = {};
+            Object.defineProperty(oStorage, "getItem", {
+              value: function(sKey) {
+                return sKey ? this[sKey] : null;
+              },
+              writable: false,
+              configurable: false,
+              enumerable: false
+            });
+            Object.defineProperty(oStorage, "key", {
+              value: function(nKeyId) {
+                return aKeys[nKeyId];
+              },
+              writable: false,
+              configurable: false,
+              enumerable: false
+            });
+            Object.defineProperty(oStorage, "setItem", {
+              value: function(sKey, sValue) {
+                if (!sKey) {
+                  return;
+                }
+                document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+              },
+              writable: false,
+              configurable: false,
+              enumerable: false
+            });
+            Object.defineProperty(oStorage, "length", {
+              get: function() {
+                return aKeys.length;
+              },
+              configurable: false,
+              enumerable: false
+            });
+            Object.defineProperty(oStorage, "removeItem", {
+              value: function(sKey) {
+                if (!sKey) {
+                  return;
+                }
+                document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+              },
+              writable: false,
+              configurable: false,
+              enumerable: false
+            });
+            this.get = function() {
+              var iThisIndx;
+              for (var sKey in oStorage) {
+                iThisIndx = aKeys.indexOf(sKey);
+                if (iThisIndx === -1) {
+                  oStorage.setItem(sKey, oStorage[sKey]);
+                } else {
+                  aKeys.splice(iThisIndx, 1);
+                }
+                delete oStorage[sKey];
+              }
+              for (aKeys; aKeys.length > 0; aKeys.splice(0, 1)) {
+                oStorage.removeItem(aKeys[0]);
+              }
+              for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
+                aCouple = aCouples[nIdx].split(/\s*=\s*/);
+                if (aCouple.length > 1) {
+                  oStorage[iKey = unescape(aCouple[0])] = unescape(aCouple[1]);
+                  aKeys.push(iKey);
+                }
+              }
+              return oStorage;
+            };
+            this.configurable = false;
+            this.enumerable = true;
+          })());
+        }
+      }
+    },
+
+    // allows bind support
+    functionBind: function() {
+      // Credit to Douglas Crockford for this bind method
+      if (!Function.prototype.bind) {
+        Function.prototype.bind = function(oThis) {
+          if (typeof this !== "function") {
+            // closest thing possible to the ECMAScript 5 internal IsCallable function
+            throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+          }
+          var aArgs = Array.prototype.slice.call(arguments, 1),
+            fToBind = this,
+            fNOP = function() {},
+            fBound = function() {
+              return fToBind.apply(this instanceof fNOP && oThis ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
+            };
+          fNOP.prototype = this.prototype;
+          fBound.prototype = new fNOP();
+          return fBound;
+        };
+      }
+    }
+
+  };
+
+  // startup
+  useful.polyfills.html5();
+  useful.polyfills.arrayIndexOf();
+  useful.polyfills.arrayIsArray();
+  useful.polyfills.arrayMap();
+  useful.polyfills.querySelectorAll();
+  useful.polyfills.addEventListener();
+  useful.polyfills.consoleLog();
+  useful.polyfills.objectCreate();
+  useful.polyfills.stringTrim();
+  useful.polyfills.localStorage();
+  useful.polyfills.functionBind();
+
+  // return as a require.js module
+  if (typeof module !== 'undefined') {
+    exports = module.exports = useful.polyfills;
+  }
 
 })();
 
@@ -1085,18 +1238,24 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Main = function (config, context) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
 	this.aspect = null;
 	this.timeout = null;
-	// elementects
+
+	// OBJECTS
+
 	this.toolbar = null;
 	this.touch = null;
 	this.spread = null;
-	// methods
+
+	// METHODS
+
 	this.init = function () {
 		var reference = this.element.getElementsByTagName('a')[0];
 		// add the loading the indicator
@@ -1110,11 +1269,9 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.open = this.config.open;
 		this.spread.start();
 		// build the toolbar elementect
-		this.toolbar = new this.context.Toolbar(this);
-		this.toolbar.start();
+		this.toolbar = new this.context.Toolbar(this).init();
 		// start the touch controls
-		this.touch = new this.context.Touch(this);
-		this.touch.start();
+		this.touch = new this.context.Touch(this).init();
 		// restore the aspect ratio after resizes
 		window.addEventListener('resize', this.onResized(), true);
 		// apply the custom styling
@@ -1122,6 +1279,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// return the object
 		return this;
 	};
+
 	this.styling = function () {
 		// create a custom stylesheet
 		var style = document.createElement("style");
@@ -1147,6 +1305,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 			}
 		}
 	};
+
 	this.update = function () {
 		// redraw the toolbar
 		this.toolbar.update();
@@ -1155,7 +1314,9 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// redraw the spread
 		this.spread.update();
 	};
-	// events
+
+	// EVENTS
+
 	this.onResized = function () {
 		var context = this;
 		return function () {
@@ -1167,6 +1328,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 			}, context.config.delay);
 		};
 	};
+
 	this.onLoaded = function () {
 		var context = this;
 		return function () {
@@ -1183,6 +1345,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// zoom to the new factor
 		this.zoomTo(newFactor);
 	};
+
 	this.zoomTo = function (factor) {
 		// validate the limits
 		if (factor < 1) { factor = 1; }
@@ -1190,6 +1353,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// zoom the spread
 		this.spread.zoom(factor);
 	};
+
 	this.moveBy = function (horizontal, vertical) {
 		// if we were given pixels convert to fraction first
 		horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.element.offsetWidth * this.config.split : horizontal;
@@ -1200,6 +1364,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// move to the new position
 		this.moveTo(newHorizontal, newVertical);
 	};
+
 	this.moveTo = function (horizontal, vertical) {
 		// validate the limits
 		if (horizontal < 0) { horizontal = 0; }
@@ -1209,6 +1374,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// move the spread
 		this.spread.move(horizontal, vertical);
 	};
+
 	this.pageBy = function (increment) {
 		// determine how much to increase the page number
 		switch (increment) {
@@ -1227,6 +1393,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// update the toolbar
 		this.toolbar.update();
 	};
+
 	this.pageTo = function (number) {
 		// get the highest page number
 		var maxNumber = this.spread.pages.length;
@@ -1258,7 +1425,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Page = function (parent) {
-	// properties
+
+	// PROPERTIES
+	
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -1274,10 +1443,14 @@ useful.Catalog.prototype.Page = function (parent) {
 	this.preview = null;
 	this.index = null;
 	this.bound = null;
-	// elementects
+	
+	// OBJECTS
+	
 	this.tiles = {};
 	this.tilesCount = 0;
-	// methods
+
+	// METHODS
+	
 	this.start = function () {
 		// build a container for the page
 		this.element = document.createElement('div');
@@ -1290,12 +1463,14 @@ useful.Catalog.prototype.Page = function (parent) {
 		// add it to the parent
 		this.parent.element.appendChild(this.element);
 	};
+	
 	this.update = function () {
 		// generate new tiles
 		this.generate();
 		// redraw the existing tiles
 		this.redraw();
 	};
+	
 	this.generate = function () {
 		var col, row, left, top, right, bottom, width, height, name;
 		// get the visible area
@@ -1343,6 +1518,7 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
+	
 	this.redraw = function () {
 		var name, min = this.parent.tilesCount - this.parent.parent.config.cache;
 		// for all existing tiles on this page
@@ -1361,16 +1537,19 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
+	
 	this.open = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-open cat-page-' + direction;
 		// update the page
 		this.update();
 	};
+	
 	this.close = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
 	};
+	
 	this.stay = function (direction) {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -1379,6 +1558,7 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
+	
 	this.show = function () {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -1387,13 +1567,16 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
+	
 	this.hide = function () {
 		// if the elementect is nowhere near the open page, it's safe to stop it from rendering
 		this.element.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
 	};
-	// events
+
+	// EVENTS
+	
 };
 
 // return as a require.js module
@@ -1415,7 +1598,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Spread = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -1434,9 +1619,13 @@ useful.Catalog.prototype.Spread = function (parent) {
 	this.timeout = null;
 	this.tilesCount = 0;
 	this.busy = false;
-	// elementects
+
+	// OBJECTS
+
 	this.pages = [];
-	// methods
+
+	// METHODS
+
 	this.start = function () {
 		// build a container for the pages
 		this.element = document.createElement('div');
@@ -1470,12 +1659,14 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// apply the starting settings
 		this.zoom(this.magnification);
 	};
+
 	this.update = function () {
 		// recalculate the visible area
 		this.recalc();
 		// redraw the pages
 		this.redraw();
 	};
+
 	this.recalc = function () {
 		var overscan = 1 - 1 / this.magnification;
 		this.max = this.pages[0].height / this.wrapper.offsetHeight;
@@ -1502,8 +1693,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 				'bottom' : this.area.odd.bottom
 			};
 		}
-		console.log('this.area', this.area);
+		//console.log('this.area', this.area);
 	};
+
 	this.redraw = function () {
 		var even = this.open + this.open % this.split,
 			odd = even - 1;
@@ -1520,6 +1712,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 			}
 		}
 	};
+
 	this.next = function () {
 		var oldEven = this.open + this.open % this.split,
 			oldOdd = oldEven - 1,
@@ -1543,6 +1736,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// store the new page number
 		this.open = (newEven < pagesLength) ? newEven : pagesLength;
 	};
+
 	this.previous = function () {
 		var oldEven = this.open + this.open % this.split,
 			oldOdd = oldEven - 1,
@@ -1566,6 +1760,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// store the new page number
 		this.open = (newEven >= 0) ? newEven : 0;
 	};
+
 	this.zoom = function (magnification) {
 		// apply the zoom factor
 		this.element.style.width = (magnification * 100) + '%';
@@ -1580,6 +1775,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// re-adjust the position
 		this.move();
 	};
+
 	this.move = function (horizontal, vertical) {
 		var _this = this;
 		// default positions
@@ -1597,7 +1793,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 			_this.parent.update();
 		}, _this.parent.config.duration);
 	};
-	// events
+
+	// EVENTS
+
 	this.onMove = function () {
 		var _this = this;
 		return function () {
@@ -1636,7 +1834,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Tile = function (parent) {
-	// properties
+
+	// PROPERTIES
+	
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -1651,7 +1851,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 	this.height = null;
 	this.magnification = null;
 	this.index = null;
-	// methods
+
+	// METHODS
+	
 	this.start = function () {
 		// construct the tile
 		this.element = document.createElement('div');
@@ -1678,6 +1880,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 		// add the tile to the page
 		this.parent.element.appendChild(this.element);
 	};
+	
 	this.update = function () {
 		var area = this.parent.parent.area[this.parent.bound],
 			magnification = this.parent.parent.magnification;
@@ -1688,7 +1891,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 			((this.top >= area.top && this.top <= area.bottom) || (this.bottom >= area.top && this.bottom <= area.bottom))
 		) ? 'block': 'none';
 	};
-	// events
+
+	// EVENTS
+	
 	this.onLoaded = function () {
 		var _this = this;
 		return function () { _this.img.style.visibility = 'visible'; };
@@ -1714,15 +1919,19 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Toolbar = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
 	this.menu = null;
 	this.elements = {};
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// build the navigation elements
 		this.menu = document.createElement('menu');
 		this.menu.className = 'cat-toolbar';
@@ -1734,7 +1943,10 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.addZoomControls();
 		// add the menu to the parent element
 		this.parent.element.appendChild(this.menu);
+		// return the object
+		return this;
 	};
+
 	this.update = function () {
 		// get the spread elementect
 		var spread = this.parent.spread;
@@ -1748,6 +1960,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomInButton.className = (spread.magnification < spread.max) ? 'cat-zoom-in': 'cat-zoom-in disabled';
 		this.elements.zoomOutButton.className = (spread.magnification > 1) ? 'cat-zoom-out': 'cat-zoom-out disabled';
 	};
+
 	this.addPageNumber = function () {
 		// add a container for the page number controls
 		this.elements.pageNumber = document.createElement('div');
@@ -1766,6 +1979,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		// add the container to the toolbar
 		this.menu.appendChild(this.elements.pageNumber);
 	};
+
 	this.addPageControls = function () {
 		// add the "previous page" button
 		this.elements.nextButton = document.createElement('button');
@@ -1784,6 +1998,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage());
 		this.menu.appendChild(this.elements.prevButton);
 	};
+
 	this.addZoomControls = function () {
 		// add the "zoom in" button
 		this.elements.zoomInButton = document.createElement('button');
@@ -1806,7 +2021,9 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd());
 		this.menu.appendChild(this.elements.zoomOutButton);
 	};
-	// events
+
+	// EVENTS
+
 	this.onNumberChange = function (input) {
 		var _this = this;
 		return function () {
@@ -1822,6 +2039,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			}
 		};
 	};
+
 	this.onNextPage = function () {
 		var _this = this;
 		return function (event) {
@@ -1831,6 +2049,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onPrevPage = function () {
 		var _this = this;
 		return function (event) {
@@ -1840,6 +2059,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomIn = function () {
 		var _this = this;
 		return function (event) {
@@ -1852,6 +2072,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomInEnd = function () {
 		var _this = this;
 		return function (event) {
@@ -1861,6 +2082,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomOut = function () {
 		var _this = this;
 		return function (event) {
@@ -1873,6 +2095,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomOutEnd = function () {
 		var _this = this;
 		return function (event) {
@@ -1903,15 +2126,19 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Touch = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
 	this.element = null;
 	this.hasTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// start touch controls
 		this.gestures = new useful.Gestures().init({
 			'element' : this.parent.element,
@@ -1923,11 +2150,16 @@ useful.Catalog.prototype.Touch = function (parent) {
 			'pinch' : this.onPinch()
 		});
 		// TODO: double tap for zoom in / out
+		// return the object
+		return this;
 	};
+
 	this.update = function () {
 		// nothing to do yet
 	};
-	// events
+
+	// EVENTS
+
 	this.onSwipeLeft = function () {
 		var _this = this;
 		return function () {
@@ -1937,6 +2169,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			}
 		};
 	};
+
 	this.onSwipeRight = function () {
 		var _this = this;
 		return function () {
@@ -1946,6 +2179,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			}
 		};
 	};
+
 	this.onDrag = function () {
 		var _this = this;
 		return function (metrics) {
@@ -1956,6 +2190,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			);
 		};
 	};
+
 	this.onPinch = function () {
 		var _this = this;
 		return function (metrics) {
@@ -1984,13 +2219,18 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.init = function (config) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
-	// methods
+
+	// METHODS
+
 	this.only = function (config) {
 		// start an instance of the script
 		return new this.Main(config, this).init();
 	};
+
 	this.each = function (config) {
 		var _config, _context = this, instances = [];
 		// for all element
@@ -2007,8 +2247,11 @@ useful.Catalog.prototype.init = function (config) {
 		// return the instances
 		return instances;
 	};
-	// return a single or multiple instances of the script
+
+	// START
+
 	return (config.elements) ? this.each(config) : this.only(config);
+
 };
 
 // return as a require.js module

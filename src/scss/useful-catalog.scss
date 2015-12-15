@@ -1,5 +1,5 @@
-@import "compass/css3";
-@import "compass/utilities";
+
+
 @import "mixins";
 /*
 	Reference Styling for An Interactive Row of Thumbnails
@@ -11,7 +11,7 @@
 	position : relative;
 	width : 100%;
 	* {
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 	}
 	ul, menu {
 		margin : 0;
@@ -113,61 +113,61 @@
 		pages
 	*/
 	.cat-page {
-		@include vendors('transform', 'scale(0, 1)');
+		transform: scale(0, 1);
 		position : absolute;
 		top : 0;
 		bottom : 0;
 		z-index : 100;
 		&-odd {
-			@include vendors('transform-origin', '100% 50%');
+			transform-origin: 100% 50%;
 			left : 0;
 			right : 50%;
 		}
 		&-even {
-			@include vendors('transform-origin', '0% 50%');
+			transform-origin: 0% 50%;
 			left : 50%;
 			right : 0;
 		}
 		&-open {
-			@include vendors('transform', 'scale(1, 1)');
+			transform: scale(1, 1);
 			z-index : 300;
 		}
 		&-close {
-			@include vendors('transform', 'scale(0, 1)');
+			transform: scale(0, 1);
 			z-index : 300;
 		}
 		&-stay {
-			@include vendors('transform', 'scale(1, 1)');
+			transform: scale(1, 1);
 			z-index : 200;
 		}
 		&-decreasing {
-			@include transition-property(transform);
-			@include transition-duration(500ms);
-			@include transition-timing-function(ease);
+			transition-property: transform;
+			transition-duration: 500ms;
+			transition-timing-function: ease;
 			&.cat-page-odd {
-				@include transition-delay(500ms);
+				transition-delay: 500ms;
 			}
 			&.cat-page-even {
-				@include transition-delay(1000ms);
+				transition-delay: 1000ms;
 			}
 			&.cat-page-stay {
-				@include transition-property(none);
+				transition-property: none;
 			}
 		}
 		&-increasing {
-			@include transition-property(transform);
-			@include transition-duration(500ms);
-			@include transition-timing-function(ease);
+			transition-property: transform;
+			transition-duration: 500ms;
+			transition-timing-function: ease;
 			&.cat-page-odd {
-				@include transition-delay(1000ms);
+				transition-delay: 1000ms;
 			}
 			&.cat-page-even {
-				@include transition-delay(500ms);
+				transition-delay: 500ms;
 			}
 			&.cat-page-stay {
-				@include transition-property(none);
+				transition-property: none;
 			}
-		}	
+		}
 	}
 	/*
 		tiles

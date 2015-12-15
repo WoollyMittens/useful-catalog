@@ -12,15 +12,19 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Toolbar = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
 	this.menu = null;
 	this.elements = {};
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// build the navigation elements
 		this.menu = document.createElement('menu');
 		this.menu.className = 'cat-toolbar';
@@ -32,7 +36,10 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.addZoomControls();
 		// add the menu to the parent element
 		this.parent.element.appendChild(this.menu);
+		// return the object
+		return this;
 	};
+
 	this.update = function () {
 		// get the spread elementect
 		var spread = this.parent.spread;
@@ -46,6 +53,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomInButton.className = (spread.magnification < spread.max) ? 'cat-zoom-in': 'cat-zoom-in disabled';
 		this.elements.zoomOutButton.className = (spread.magnification > 1) ? 'cat-zoom-out': 'cat-zoom-out disabled';
 	};
+
 	this.addPageNumber = function () {
 		// add a container for the page number controls
 		this.elements.pageNumber = document.createElement('div');
@@ -64,6 +72,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		// add the container to the toolbar
 		this.menu.appendChild(this.elements.pageNumber);
 	};
+
 	this.addPageControls = function () {
 		// add the "previous page" button
 		this.elements.nextButton = document.createElement('button');
@@ -82,6 +91,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage());
 		this.menu.appendChild(this.elements.prevButton);
 	};
+
 	this.addZoomControls = function () {
 		// add the "zoom in" button
 		this.elements.zoomInButton = document.createElement('button');
@@ -104,7 +114,9 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd());
 		this.menu.appendChild(this.elements.zoomOutButton);
 	};
-	// events
+
+	// EVENTS
+
 	this.onNumberChange = function (input) {
 		var _this = this;
 		return function () {
@@ -120,6 +132,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			}
 		};
 	};
+
 	this.onNextPage = function () {
 		var _this = this;
 		return function (event) {
@@ -129,6 +142,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onPrevPage = function () {
 		var _this = this;
 		return function (event) {
@@ -138,6 +152,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomIn = function () {
 		var _this = this;
 		return function (event) {
@@ -150,6 +165,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomInEnd = function () {
 		var _this = this;
 		return function (event) {
@@ -159,6 +175,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomOut = function () {
 		var _this = this;
 		return function (event) {
@@ -171,6 +188,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 			event.preventDefault();
 		};
 	};
+
 	this.onZoomOutEnd = function () {
 		var _this = this;
 		return function (event) {

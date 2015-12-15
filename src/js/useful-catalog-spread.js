@@ -12,7 +12,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Spread = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -31,9 +33,13 @@ useful.Catalog.prototype.Spread = function (parent) {
 	this.timeout = null;
 	this.tilesCount = 0;
 	this.busy = false;
-	// elementects
+
+	// OBJECTS
+
 	this.pages = [];
-	// methods
+
+	// METHODS
+
 	this.start = function () {
 		// build a container for the pages
 		this.element = document.createElement('div');
@@ -67,12 +73,14 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// apply the starting settings
 		this.zoom(this.magnification);
 	};
+
 	this.update = function () {
 		// recalculate the visible area
 		this.recalc();
 		// redraw the pages
 		this.redraw();
 	};
+
 	this.recalc = function () {
 		var overscan = 1 - 1 / this.magnification;
 		this.max = this.pages[0].height / this.wrapper.offsetHeight;
@@ -99,8 +107,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 				'bottom' : this.area.odd.bottom
 			};
 		}
-		console.log('this.area', this.area);
+		//console.log('this.area', this.area);
 	};
+
 	this.redraw = function () {
 		var even = this.open + this.open % this.split,
 			odd = even - 1;
@@ -117,6 +126,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 			}
 		}
 	};
+
 	this.next = function () {
 		var oldEven = this.open + this.open % this.split,
 			oldOdd = oldEven - 1,
@@ -140,6 +150,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// store the new page number
 		this.open = (newEven < pagesLength) ? newEven : pagesLength;
 	};
+
 	this.previous = function () {
 		var oldEven = this.open + this.open % this.split,
 			oldOdd = oldEven - 1,
@@ -163,6 +174,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// store the new page number
 		this.open = (newEven >= 0) ? newEven : 0;
 	};
+
 	this.zoom = function (magnification) {
 		// apply the zoom factor
 		this.element.style.width = (magnification * 100) + '%';
@@ -177,6 +189,7 @@ useful.Catalog.prototype.Spread = function (parent) {
 		// re-adjust the position
 		this.move();
 	};
+
 	this.move = function (horizontal, vertical) {
 		var _this = this;
 		// default positions
@@ -194,7 +207,9 @@ useful.Catalog.prototype.Spread = function (parent) {
 			_this.parent.update();
 		}, _this.parent.config.duration);
 	};
-	// events
+
+	// EVENTS
+
 	this.onMove = function () {
 		var _this = this;
 		return function () {

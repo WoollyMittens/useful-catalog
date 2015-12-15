@@ -31,7 +31,7 @@ To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5
 ```javascript
 var catalog = new useful.Catalog().init({
 	'element' : document.getElementById('catalogExample'),
-	'imageslice' : 'inc/php/imageslice.php?src=../../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
+	'imageslice' : 'php/imageslice.php?src=../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
 	'cache' : 256,
 	'delay' : 100,
 	'duration' : 1600,
@@ -89,15 +89,15 @@ Increase or decrease the page number.
 
 This project uses node.js from http://nodejs.org/
 
-This project uses grunt.js from http://gruntjs.com/
+This project uses gulp.js from http://gulpjs.com/
 
 The following commands are available for development:
 + `npm install` - Installs the prerequisites.
-+ `grunt import` - Re-imports libraries from supporting projects to `./src/libs/` if available under the same folder tree.
-+ `grunt dev` - Builds the project for development purposes.
-+ `grunt prod` - Builds the project for deployment purposes.
-+ `grunt watch` - Continuously recompiles updated files during development sessions.
-+ `grunt serve` - Serves the project on a temporary web server at http://localhost:8000/ .
++ `gulp import` - Re-imports libraries from supporting projects to `./src/libs/` if available under the same folder tree.
++ `gulp dev` - Builds the project for development purposes.
++ `gulp prod` - Builds the project for deployment purposes.
++ `gulp watch` - Continuously recompiles updated files during development sessions.
++ `gulp serve` - Serves the project on a temporary web server at http://localhost:8000/ .
 
 ## License
 

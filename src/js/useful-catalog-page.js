@@ -12,7 +12,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Page = function (parent) {
-	// properties
+
+	// PROPERTIES
+	
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -28,10 +30,14 @@ useful.Catalog.prototype.Page = function (parent) {
 	this.preview = null;
 	this.index = null;
 	this.bound = null;
-	// elementects
+	
+	// OBJECTS
+	
 	this.tiles = {};
 	this.tilesCount = 0;
-	// methods
+
+	// METHODS
+	
 	this.start = function () {
 		// build a container for the page
 		this.element = document.createElement('div');
@@ -44,12 +50,14 @@ useful.Catalog.prototype.Page = function (parent) {
 		// add it to the parent
 		this.parent.element.appendChild(this.element);
 	};
+	
 	this.update = function () {
 		// generate new tiles
 		this.generate();
 		// redraw the existing tiles
 		this.redraw();
 	};
+	
 	this.generate = function () {
 		var col, row, left, top, right, bottom, width, height, name;
 		// get the visible area
@@ -97,6 +105,7 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
+	
 	this.redraw = function () {
 		var name, min = this.parent.tilesCount - this.parent.parent.config.cache;
 		// for all existing tiles on this page
@@ -115,16 +124,19 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
+	
 	this.open = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-open cat-page-' + direction;
 		// update the page
 		this.update();
 	};
+	
 	this.close = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
 	};
+	
 	this.stay = function (direction) {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -133,6 +145,7 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
+	
 	this.show = function () {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -141,13 +154,16 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
+	
 	this.hide = function () {
 		// if the elementect is nowhere near the open page, it's safe to stop it from rendering
 		this.element.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close';
 	};
-	// events
+
+	// EVENTS
+	
 };
 
 // return as a require.js module

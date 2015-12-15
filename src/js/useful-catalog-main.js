@@ -12,18 +12,24 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Main = function (config, context) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
 	this.aspect = null;
 	this.timeout = null;
-	// elementects
+
+	// OBJECTS
+
 	this.toolbar = null;
 	this.touch = null;
 	this.spread = null;
-	// methods
+
+	// METHODS
+
 	this.init = function () {
 		var reference = this.element.getElementsByTagName('a')[0];
 		// add the loading the indicator
@@ -37,11 +43,9 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.open = this.config.open;
 		this.spread.start();
 		// build the toolbar elementect
-		this.toolbar = new this.context.Toolbar(this);
-		this.toolbar.start();
+		this.toolbar = new this.context.Toolbar(this).init();
 		// start the touch controls
-		this.touch = new this.context.Touch(this);
-		this.touch.start();
+		this.touch = new this.context.Touch(this).init();
 		// restore the aspect ratio after resizes
 		window.addEventListener('resize', this.onResized(), true);
 		// apply the custom styling
@@ -49,6 +53,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// return the object
 		return this;
 	};
+
 	this.styling = function () {
 		// create a custom stylesheet
 		var style = document.createElement("style");
@@ -74,6 +79,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 			}
 		}
 	};
+
 	this.update = function () {
 		// redraw the toolbar
 		this.toolbar.update();
@@ -82,7 +88,9 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// redraw the spread
 		this.spread.update();
 	};
-	// events
+
+	// EVENTS
+
 	this.onResized = function () {
 		var context = this;
 		return function () {
@@ -94,6 +102,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 			}, context.config.delay);
 		};
 	};
+
 	this.onLoaded = function () {
 		var context = this;
 		return function () {
@@ -110,6 +119,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// zoom to the new factor
 		this.zoomTo(newFactor);
 	};
+
 	this.zoomTo = function (factor) {
 		// validate the limits
 		if (factor < 1) { factor = 1; }
@@ -117,6 +127,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// zoom the spread
 		this.spread.zoom(factor);
 	};
+
 	this.moveBy = function (horizontal, vertical) {
 		// if we were given pixels convert to fraction first
 		horizontal = (horizontal % 1 === 0) ? horizontal / this.spread.element.offsetWidth * this.config.split : horizontal;
@@ -127,6 +138,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// move to the new position
 		this.moveTo(newHorizontal, newVertical);
 	};
+
 	this.moveTo = function (horizontal, vertical) {
 		// validate the limits
 		if (horizontal < 0) { horizontal = 0; }
@@ -136,6 +148,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// move the spread
 		this.spread.move(horizontal, vertical);
 	};
+
 	this.pageBy = function (increment) {
 		// determine how much to increase the page number
 		switch (increment) {
@@ -154,6 +167,7 @@ useful.Catalog.prototype.Main = function (config, context) {
 		// update the toolbar
 		this.toolbar.update();
 	};
+
 	this.pageTo = function (number) {
 		// get the highest page number
 		var maxNumber = this.spread.pages.length;

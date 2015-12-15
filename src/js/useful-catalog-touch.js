@@ -12,15 +12,19 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Touch = function (parent) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
 	this.element = null;
 	this.hasTouch = (('ontouchstart' in window) || (navigator.MaxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// start touch controls
 		this.gestures = new useful.Gestures().init({
 			'element' : this.parent.element,
@@ -32,11 +36,16 @@ useful.Catalog.prototype.Touch = function (parent) {
 			'pinch' : this.onPinch()
 		});
 		// TODO: double tap for zoom in / out
+		// return the object
+		return this;
 	};
+
 	this.update = function () {
 		// nothing to do yet
 	};
-	// events
+
+	// EVENTS
+
 	this.onSwipeLeft = function () {
 		var _this = this;
 		return function () {
@@ -46,6 +55,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			}
 		};
 	};
+
 	this.onSwipeRight = function () {
 		var _this = this;
 		return function () {
@@ -55,6 +65,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			}
 		};
 	};
+
 	this.onDrag = function () {
 		var _this = this;
 		return function (metrics) {
@@ -65,6 +76,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 			);
 		};
 	};
+
 	this.onPinch = function () {
 		var _this = this;
 		return function (metrics) {

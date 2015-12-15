@@ -1,103 +1,10 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8" />
-		<title>useful-catalog.js: Scanned Print Media Viewer</title>
-		<style>
-			html { font-family:Sans-Serif; font-size:75%; height:100%; }
-			body { _height:100%; line-height:180%; margin:0; min-height:100%; padding:1%; }
-			.example { max-width:960px; margin:0 auto; padding:0; clear:both; }
-			.example > article, .example > aside { width:98%; padding:2%; }
-			.example-left > article, .example-left > aside { width:48%; padding:1%; float:left; }
-			.example-right > article, .example-right > aside { width:48%; padding:1%; float:right; }
-		</style>
-		<!--[if lte IE 9]>
-			<meta http-equiv="imagetoolbar" content="no"/>
-			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
-		<![endif]-->
+    <title>Redirect to demo</title>
+		<script>document.location.replace('./dist');</script>
 	</head>
 	<body>
-		<section class="example example-left">
-			<article>
-				<h2>Scanned Print Media Viewer</h2>
-				<p>A viewer for browsing through and zooming in on magazine pages.</p>
-				<p><a class="button downloadButton" href="http://github.com/WoollyMittens/useful-catalog" target="_blank">Download (GitHub)</a></p>
-			</article>
-			<aside>
-				<!-- Cut below this -->
-				<style>@import url("./inc/css/useful-catalog.css");</style>
-				<figure class="catalog-browser cat-busy" id="catalogExample">
-					<ul>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-1.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-1.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-2.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-2.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-3.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-3.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-4.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-4.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-5.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-5.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-6.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-6.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-7.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-7.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-8.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-8.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-9.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-9.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-10.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-10.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-11.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-11.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-12.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-12.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-13.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-13.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-14.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-14.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-15.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-15.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-16.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-16.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-17.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-17.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-18.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-18.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-19.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-19.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-20.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-20.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-21.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-21.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-22.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-22.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-23.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-23.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-24.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-24.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-25.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-25.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-26.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-26.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-27.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-27.jpg"/></a></li>
-						<li><a data-width="1750" data-height="2479" href="./inc/large/Newcastle_walking-trails-28.jpg"><img alt="" src="./inc/small/Newcastle_walking-trails-28.jpg"/></a></li>
-					</ul>
-				</figure>
-				<script src="./inc/js/useful-catalog.js"></script>
-				<script>
-				//<!--
-					// create a new instance of the script
-					var catalog = new useful.Catalog().init({
-						'element' : document.getElementById('catalogExample'),
-						'imageslice' : 'inc/php/imageslice.php?src=../../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
-						'cache' : 256,
-						'delay' : 100,
-						'duration' : 1600,
-						'tile' : 128,
-						'split' : 2,
-						'open' : 0,
-						'colorPassive' : '#ff6a00',
-						'colorActive' : '#d45800',
-						'colorHover' : '#ff9800',
-						'colorDisabled' : '#7f7f7f'
-					});
-				//-->
-				</script>
-				<!-- Cut above this -->
-				<p>
-					<a href="#" onclick="catalog.zoomTo(1); return false;">Zoom to 1</a>
-					<a href="#" onclick="catalog.zoomTo(2); return false;">Zoom to 2</a>
-					<a href="#" onclick="catalog.zoomTo(4); return false;">Zoom to 4</a>
-					<a href="#" onclick="catalog.zoomTo(8); return false;">Zoom to 8</a>
-				</p>
-				<p>
-					<a href="#" onclick="catalog.pageTo(0); return false;">Show page 1</a>
-					<a href="#" onclick="catalog.pageTo(2); return false;">Show page 3</a>
-					<a href="#" onclick="catalog.pageTo(4); return false;">Show page 5</a>
-					<a href="#" onclick="catalog.pageTo(6); return false;">Show page 7</a>
-				</p>
-				<p>
-					<a href="#" onclick="catalog.pageBy(-1); return false;">Show previous page</a>
-					<a href="#" onclick="catalog.pageBy(1); return false;">Show next page</a>
-				</p>
-			</aside>
-		</section>
+		<a href="./dist">Start</a>
 	</body>
 </html>

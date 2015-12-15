@@ -12,7 +12,9 @@ useful.Catalog = useful.Catalog || function () {};
 
 // extend the constructor
 useful.Catalog.prototype.Tile = function (parent) {
-	// properties
+
+	// PROPERTIES
+	
 	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
@@ -27,7 +29,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 	this.height = null;
 	this.magnification = null;
 	this.index = null;
-	// methods
+
+	// METHODS
+	
 	this.start = function () {
 		// construct the tile
 		this.element = document.createElement('div');
@@ -54,6 +58,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 		// add the tile to the page
 		this.parent.element.appendChild(this.element);
 	};
+	
 	this.update = function () {
 		var area = this.parent.parent.area[this.parent.bound],
 			magnification = this.parent.parent.magnification;
@@ -64,7 +69,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 			((this.top >= area.top && this.top <= area.bottom) || (this.bottom >= area.top && this.bottom <= area.bottom))
 		) ? 'block': 'none';
 	};
-	// events
+
+	// EVENTS
+	
 	this.onLoaded = function () {
 		var _this = this;
 		return function () { _this.img.style.visibility = 'visible'; };
