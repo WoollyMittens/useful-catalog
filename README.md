@@ -2,7 +2,7 @@
 
 A viewer for browsing through and zooming in on magazine pages.
 
-Try the <a href="http://www.woollymittens.nl/useful/default.php?url=useful-catalog">demo</a>.
+Try the <a href="http://www.woollymittens.nl/default.php?url=useful-catalog">demo</a>.
 
 ## How to include the script
 
