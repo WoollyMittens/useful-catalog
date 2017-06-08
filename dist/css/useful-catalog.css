@@ -72,6 +72,7 @@ Applies the "clearfix" hack to a container with floating content
 	}
 	*/ }
   .catalog-browser * {
+    -webkit-box-sizing: border-box;
     box-sizing: border-box; }
   .catalog-browser ul, .catalog-browser menu {
     margin: 0;
@@ -181,26 +182,40 @@ Applies the "clearfix" hack to a container with floating content
       transform: scale(1, 1);
       z-index: 200; }
     .catalog-browser .cat-page-decreasing {
+      -webkit-transition-property: -webkit-transform;
       transition-property: -webkit-transform;
       transition-property: transform;
+      transition-property: transform, -webkit-transform;
+      -webkit-transition-duration: 500ms;
       transition-duration: 500ms;
+      -webkit-transition-timing-function: ease;
       transition-timing-function: ease; }
       .catalog-browser .cat-page-decreasing.cat-page-odd {
+        -webkit-transition-delay: 500ms;
         transition-delay: 500ms; }
       .catalog-browser .cat-page-decreasing.cat-page-even {
+        -webkit-transition-delay: 1000ms;
         transition-delay: 1000ms; }
       .catalog-browser .cat-page-decreasing.cat-page-stay {
+        -webkit-transition-property: none;
         transition-property: none; }
     .catalog-browser .cat-page-increasing {
+      -webkit-transition-property: -webkit-transform;
       transition-property: -webkit-transform;
       transition-property: transform;
+      transition-property: transform, -webkit-transform;
+      -webkit-transition-duration: 500ms;
       transition-duration: 500ms;
+      -webkit-transition-timing-function: ease;
       transition-timing-function: ease; }
       .catalog-browser .cat-page-increasing.cat-page-odd {
+        -webkit-transition-delay: 1000ms;
         transition-delay: 1000ms; }
       .catalog-browser .cat-page-increasing.cat-page-even {
+        -webkit-transition-delay: 500ms;
         transition-delay: 500ms; }
       .catalog-browser .cat-page-increasing.cat-page-stay {
+        -webkit-transition-property: none;
         transition-property: none; }
   .catalog-browser .cat-preview {
     position: absolute;
