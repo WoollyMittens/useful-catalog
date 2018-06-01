@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Tile = function (parent) {
+// extend the class
+Catalog.prototype.Tile = function (parent) {
 
 	// PROPERTIES
-	
-	"use strict";
+
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -31,7 +18,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 	this.index = null;
 
 	// METHODS
-	
+
 	this.start = function () {
 		// construct the tile
 		this.element = document.createElement('div');
@@ -58,7 +45,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 		// add the tile to the page
 		this.parent.element.appendChild(this.element);
 	};
-	
+
 	this.update = function () {
 		var area = this.parent.parent.area[this.parent.bound],
 			magnification = this.parent.parent.magnification;
@@ -71,14 +58,9 @@ useful.Catalog.prototype.Tile = function (parent) {
 	};
 
 	// EVENTS
-	
+
 	this.onLoaded = function () {
 		var _this = this;
 		return function () { _this.img.style.visibility = 'visible'; };
 	};
 };
-
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Tile;
-}

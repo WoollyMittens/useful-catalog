@@ -1,21 +1,56 @@
 /*
 	Source:
-	van Creij, Maurice (2014). "useful.gestures.js: A library of useful functions to ease working with touch and gestures.", version 20141127, http://www.woollymittens.nl/.
+	van Creij, Maurice (2018). "gestures.js: A library of useful functions to ease working with touch and gestures.", http://www.woollymittens.nl/.
 
 	License:
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-// create the constructor if needed
-var useful = useful || {};
-useful.Gestures = useful.Gestures || function () {};
-
 // extend the constructor
-useful.Gestures.prototype.Main = function (config, context) {
+var Gestures = function (config) {
 
 	// PROPERTIES
 
-	"use strict";
+	// METHODS
+
+	this.only = function (config) {
+		// start an instance of the script
+		return new this.Main(config, this);
+	};
+
+	this.each = function (config) {
+		var _config, _context = this, instances = [];
+		// for all element
+		for (var a = 0, b = config.elements.length; a < b; a += 1) {
+			// clone the configuration
+			_config = Object.create(config);
+			// insert the current element
+			_config.element = config.elements[a];
+			// delete the list of elements from the clone
+			delete _config.elements;
+			// start a new instance of the object
+			instances[a] = new this.Main(_config, _context);
+		}
+		// return the instances
+		return instances;
+	};
+
+	// START
+
+	return (config.elements) ? this.each(config) : this.only(config);
+
+};
+
+// return as a require.js module
+if (typeof module !== 'undefined') {
+	exports = module.exports = Gestures;
+}
+
+// extend the class
+Gestures.prototype.Main = function (config, context) {
+
+	// PROPERTIES
+
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
@@ -27,11 +62,9 @@ useful.Gestures.prototype.Main = function (config, context) {
 		// check the configuration properties
 		this.config = this.checkConfig(config);
 		// add the single touch events
-		if (config.allowSingle) { this.single = new this.context.Single(this).init(); }
+		if (config.allowSingle) { this.single = new this.context.Single(this); }
 		// add the multi touch events
-		if (config.allowMulti) { this.multi = new this.context.Multi(this).init(); }
-		// return the object
-		return this;
+		if (config.allowMulti) { this.multi = new this.context.Multi(this); }
 	};
 
 	this.checkConfig = function (config) {
@@ -110,31 +143,17 @@ useful.Gestures.prototype.Main = function (config, context) {
 		this.config.cancelGesture = true;
 	};
 
+	// EVENTS
+
+	this.init();
+
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Gestures.Main;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.gestures.js: A library of useful functions to ease working with touch and gestures.", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Gestures = useful.Gestures || function () {};
-
-// extend the constructor
-useful.Gestures.prototype.Multi = function (parent) {
+// extend the class
+Gestures.prototype.Multi = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.element = parent.config.element;
@@ -161,8 +180,6 @@ useful.Gestures.prototype.Multi = function (parent) {
 			this.element.addEventListener('touchmove', this.onChangeFallback());
 			this.element.addEventListener('touchend', this.onEndFallback());
 		}
-		// return the object
-		return this;
 	};
 
 	this.cancelGesture = function (event) {
@@ -383,31 +400,17 @@ useful.Gestures.prototype.Multi = function (parent) {
 		};
 	};
 
+	// EVENTS
+
+	this.init();
+
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Gestures.Multi;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.gestures.js: A library of useful functions to ease working with touch and gestures.", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Gestures = useful.Gestures || function () {};
-
-// extend the constructor
-useful.Gestures.prototype.Single = function (parent) {
+// extend the class
+Gestures.prototype.Single = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.element = parent.config.element;
@@ -429,8 +432,6 @@ useful.Gestures.prototype.Single = function (parent) {
 		this.element.addEventListener('mspointerdown', this.onStartTouch());
 		this.element.addEventListener('mspointermove', this.onChangeTouch());
 		document.body.addEventListener('mspointerup', this.onEndTouch());
-		// return the object
-		return this;
 	};
 
 	this.cancelTouch = function (event) {
@@ -574,39 +575,32 @@ useful.Gestures.prototype.Single = function (parent) {
 		};
 	};
 
-};
+	// EVENTS
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Gestures.Single;
-}
+	this.init();
+
+};
 
 /*
 	Source:
-	van Creij, Maurice (2014). "useful.gestures.js: A library of useful functions to ease working with touch and gestures.", version 20141127, http://www.woollymittens.nl/.
+	van Creij, Maurice (2018). "catalog.js: Scanned Print Media Viewer", http://www.woollymittens.nl/.
 
 	License:
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-// create the constructor if needed
-var useful = useful || {};
-useful.Gestures = useful.Gestures || function () {};
-
-// extend the constructor
-useful.Gestures.prototype.init = function (config) {
+// establish the class
+var Catalog = function (config) {
 
 	// PROPERTIES
-	
-	"use strict";
 
 	// METHODS
-	
+
 	this.only = function (config) {
 		// start an instance of the script
-		return new this.Main(config, this).init();
+		return new this.Main(config, this);
 	};
-	
+
 	this.each = function (config) {
 		var _config, _context = this, instances = [];
 		// for all element
@@ -618,7 +612,7 @@ useful.Gestures.prototype.init = function (config) {
 			// delete the list of elements from the clone
 			delete _config.elements;
 			// start a new instance of the object
-			instances[a] = new this.Main(_config, _context).init();
+			instances[a] = new this.Main(_config, _context);
 		}
 		// return the instances
 		return instances;
@@ -632,624 +626,14 @@ useful.Gestures.prototype.init = function (config) {
 
 // return as a require.js module
 if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Gestures;
+	exports = module.exports = Catalog;
 }
 
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.polyfills.js: A library of useful polyfills to ease working with HTML5 in legacy environments.", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// public object
-var useful = useful || {};
-
-(function() {
-
-  // Invoke strict mode
-  "use strict";
-
-  // Create a private object for this library
-  useful.polyfills = {
-
-    // enabled the use of HTML5 elements in Internet Explorer
-    html5: function() {
-      var a, b, elementsList = ['section', 'nav', 'article', 'aside', 'hgroup', 'header', 'footer', 'dialog', 'mark', 'dfn', 'time', 'progress', 'meter', 'ruby', 'rt', 'rp', 'ins', 'del', 'figure', 'figcaption', 'video', 'audio', 'source', 'canvas', 'datalist', 'keygen', 'output', 'details', 'datagrid', 'command', 'bb', 'menu', 'legend'];
-      if (navigator.userAgent.match(/msie/gi)) {
-        for (a = 0, b = elementsList.length; a < b; a += 1) {
-          document.createElement(elementsList[a]);
-        }
-      }
-    },
-
-    // allow array.indexOf in older browsers
-    arrayIndexOf: function() {
-      if (!Array.prototype.indexOf) {
-        Array.prototype.indexOf = function(obj, start) {
-          for (var i = (start || 0), j = this.length; i < j; i += 1) {
-            if (this[i] === obj) {
-              return i;
-            }
-          }
-          return -1;
-        };
-      }
-    },
-
-    // allow array.isArray in older browsers
-    arrayIsArray: function() {
-      if (!Array.isArray) {
-        Array.isArray = function(arg) {
-          return Object.prototype.toString.call(arg) === '[object Array]';
-        };
-      }
-    },
-
-    // allow array.map in older browsers (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
-    arrayMap: function() {
-
-      // Production steps of ECMA-262, Edition 5, 15.4.4.19
-      // Reference: http://es5.github.io/#x15.4.4.19
-      if (!Array.prototype.map) {
-
-        Array.prototype.map = function(callback, thisArg) {
-
-          var T, A, k;
-
-          if (this == null) {
-            throw new TypeError(' this is null or not defined');
-          }
-
-          // 1. Let O be the result of calling ToObject passing the |this|
-          //    value as the argument.
-          var O = Object(this);
-
-          // 2. Let lenValue be the result of calling the Get internal
-          //    method of O with the argument "length".
-          // 3. Let len be ToUint32(lenValue).
-          var len = O.length >>> 0;
-
-          // 4. If IsCallable(callback) is false, throw a TypeError exception.
-          // See: http://es5.github.com/#x9.11
-          if (typeof callback !== 'function') {
-            throw new TypeError(callback + ' is not a function');
-          }
-
-          // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
-          if (arguments.length > 1) {
-            T = thisArg;
-          }
-
-          // 6. Let A be a new array created as if by the expression new Array(len)
-          //    where Array is the standard built-in constructor with that name and
-          //    len is the value of len.
-          A = new Array(len);
-
-          // 7. Let k be 0
-          k = 0;
-
-          // 8. Repeat, while k < len
-          while (k < len) {
-
-            var kValue, mappedValue;
-
-            // a. Let Pk be ToString(k).
-            //   This is implicit for LHS operands of the in operator
-            // b. Let kPresent be the result of calling the HasProperty internal
-            //    method of O with argument Pk.
-            //   This step can be combined with c
-            // c. If kPresent is true, then
-            if (k in O) {
-
-              // i. Let kValue be the result of calling the Get internal
-              //    method of O with argument Pk.
-              kValue = O[k];
-
-              // ii. Let mappedValue be the result of calling the Call internal
-              //     method of callback with T as the this value and argument
-              //     list containing kValue, k, and O.
-              mappedValue = callback.call(T, kValue, k, O);
-
-              // iii. Call the DefineOwnProperty internal method of A with arguments
-              // Pk, Property Descriptor
-              // { Value: mappedValue,
-              //   Writable: true,
-              //   Enumerable: true,
-              //   Configurable: true },
-              // and false.
-
-              // In browsers that support Object.defineProperty, use the following:
-              // Object.defineProperty(A, k, {
-              //   value: mappedValue,
-              //   writable: true,
-              //   enumerable: true,
-              //   configurable: true
-              // });
-
-              // For best browser support, use the following:
-              A[k] = mappedValue;
-            }
-            // d. Increase k by 1.
-            k++;
-          }
-
-          // 9. return A
-          return A;
-        };
-      }
-
-    },
-
-    // allow document.querySelectorAll (https://gist.github.com/connrs/2724353)
-    querySelectorAll: function() {
-      if (!document.querySelectorAll) {
-        document.querySelectorAll = function(a) {
-          var b = document,
-            c = b.documentElement.firstChild,
-            d = b.createElement("STYLE");
-          return c.appendChild(d), b.__qsaels = [], d.styleSheet.cssText = a + "{x:expression(document.__qsaels.push(this))}", window.scrollBy(0, 0), b.__qsaels;
-        };
-      }
-    },
-
-    // allow addEventListener (https://gist.github.com/jonathantneal/3748027)
-    addEventListener: function() {
-      !window.addEventListener && (function(WindowPrototype, DocumentPrototype, ElementPrototype, addEventListener, removeEventListener, dispatchEvent, registry) {
-        WindowPrototype[addEventListener] = DocumentPrototype[addEventListener] = ElementPrototype[addEventListener] = function(type, listener) {
-          var target = this;
-          registry.unshift([target, type, listener, function(event) {
-            event.currentTarget = target;
-            event.preventDefault = function() {
-              event.returnValue = false;
-            };
-            event.stopPropagation = function() {
-              event.cancelBubble = true;
-            };
-            event.target = event.srcElement || target;
-            listener.call(target, event);
-          }]);
-          this.attachEvent("on" + type, registry[0][3]);
-        };
-        WindowPrototype[removeEventListener] = DocumentPrototype[removeEventListener] = ElementPrototype[removeEventListener] = function(type, listener) {
-          for (var index = 0, register; register = registry[index]; ++index) {
-            if (register[0] == this && register[1] == type && register[2] == listener) {
-              return this.detachEvent("on" + type, registry.splice(index, 1)[0][3]);
-            }
-          }
-        };
-        WindowPrototype[dispatchEvent] = DocumentPrototype[dispatchEvent] = ElementPrototype[dispatchEvent] = function(eventObject) {
-          return this.fireEvent("on" + eventObject.type, eventObject);
-        };
-      })(Window.prototype, HTMLDocument.prototype, Element.prototype, "addEventListener", "removeEventListener", "dispatchEvent", []);
-    },
-
-    // allow console.log
-    consoleLog: function() {
-      var overrideTest = new RegExp('console-log', 'i');
-      if (!window.console || overrideTest.test(document.querySelectorAll('html')[0].className)) {
-        window.console = {};
-        window.console.log = function() {
-          // if the reporting panel doesn't exist
-          var a, b, messages = '',
-            reportPanel = document.getElementById('reportPanel');
-          if (!reportPanel) {
-            // create the panel
-            reportPanel = document.createElement('DIV');
-            reportPanel.id = 'reportPanel';
-            reportPanel.style.background = '#fff none';
-            reportPanel.style.border = 'solid 1px #000';
-            reportPanel.style.color = '#000';
-            reportPanel.style.fontSize = '12px';
-            reportPanel.style.padding = '10px';
-            reportPanel.style.position = (navigator.userAgent.indexOf('MSIE 6') > -1) ? 'absolute' : 'fixed';
-            reportPanel.style.right = '10px';
-            reportPanel.style.bottom = '10px';
-            reportPanel.style.width = '180px';
-            reportPanel.style.height = '320px';
-            reportPanel.style.overflow = 'auto';
-            reportPanel.style.zIndex = '100000';
-            reportPanel.innerHTML = '&nbsp;';
-            // store a copy of this node in the move buffer
-            document.body.appendChild(reportPanel);
-          }
-          // truncate the queue
-          var reportString = (reportPanel.innerHTML.length < 1000) ? reportPanel.innerHTML : reportPanel.innerHTML.substring(0, 800);
-          // process the arguments
-          for (a = 0, b = arguments.length; a < b; a += 1) {
-            messages += arguments[a] + '<br/>';
-          }
-          // add a break after the message
-          messages += '<hr/>';
-          // output the queue to the panel
-          reportPanel.innerHTML = messages + reportString;
-        };
-      }
-    },
-
-    // allows Object.create (https://gist.github.com/rxgx/1597825)
-    objectCreate: function() {
-      if (typeof Object.create !== "function") {
-        Object.create = function(original) {
-          function Clone() {}
-          Clone.prototype = original;
-          return new Clone();
-        };
-      }
-    },
-
-    // allows String.trim (https://gist.github.com/eliperelman/1035982)
-    stringTrim: function() {
-      if (!String.prototype.trim) {
-        String.prototype.trim = function() {
-          return this.replace(/^[\s\uFEFF]+|[\s\uFEFF]+$/g, '');
-        };
-      }
-      if (!String.prototype.ltrim) {
-        String.prototype.ltrim = function() {
-          return this.replace(/^\s+/, '');
-        };
-      }
-      if (!String.prototype.rtrim) {
-        String.prototype.rtrim = function() {
-          return this.replace(/\s+$/, '');
-        };
-      }
-      if (!String.prototype.fulltrim) {
-        String.prototype.fulltrim = function() {
-          return this.replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g, '').replace(/\s+/g, ' ');
-        };
-      }
-    },
-
-    // allows localStorage support
-    localStorage: function() {
-      if (!window.localStorage) {
-        if (/MSIE 8|MSIE 7|MSIE 6/i.test(navigator.userAgent)) {
-          window.localStorage = {
-            getItem: function(sKey) {
-              if (!sKey || !this.hasOwnProperty(sKey)) {
-                return null;
-              }
-              return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
-            },
-            key: function(nKeyId) {
-              return unescape(document.cookie.replace(/\s*\=(?:.(?!;))*$/, "").split(/\s*\=(?:[^;](?!;))*[^;]?;\s*/)[nKeyId]);
-            },
-            setItem: function(sKey, sValue) {
-              if (!sKey) {
-                return;
-              }
-              document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
-              this.length = document.cookie.match(/\=/g).length;
-            },
-            length: 0,
-            removeItem: function(sKey) {
-              if (!sKey || !this.hasOwnProperty(sKey)) {
-                return;
-              }
-              document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-              this.length--;
-            },
-            hasOwnProperty: function(sKey) {
-              return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
-            }
-          };
-          window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
-        } else {
-          Object.defineProperty(window, "localStorage", new(function() {
-            var aKeys = [],
-              oStorage = {};
-            Object.defineProperty(oStorage, "getItem", {
-              value: function(sKey) {
-                return sKey ? this[sKey] : null;
-              },
-              writable: false,
-              configurable: false,
-              enumerable: false
-            });
-            Object.defineProperty(oStorage, "key", {
-              value: function(nKeyId) {
-                return aKeys[nKeyId];
-              },
-              writable: false,
-              configurable: false,
-              enumerable: false
-            });
-            Object.defineProperty(oStorage, "setItem", {
-              value: function(sKey, sValue) {
-                if (!sKey) {
-                  return;
-                }
-                document.cookie = escape(sKey) + "=" + escape(sValue) + "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
-              },
-              writable: false,
-              configurable: false,
-              enumerable: false
-            });
-            Object.defineProperty(oStorage, "length", {
-              get: function() {
-                return aKeys.length;
-              },
-              configurable: false,
-              enumerable: false
-            });
-            Object.defineProperty(oStorage, "removeItem", {
-              value: function(sKey) {
-                if (!sKey) {
-                  return;
-                }
-                document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-              },
-              writable: false,
-              configurable: false,
-              enumerable: false
-            });
-            this.get = function() {
-              var iThisIndx;
-              for (var sKey in oStorage) {
-                iThisIndx = aKeys.indexOf(sKey);
-                if (iThisIndx === -1) {
-                  oStorage.setItem(sKey, oStorage[sKey]);
-                } else {
-                  aKeys.splice(iThisIndx, 1);
-                }
-                delete oStorage[sKey];
-              }
-              for (aKeys; aKeys.length > 0; aKeys.splice(0, 1)) {
-                oStorage.removeItem(aKeys[0]);
-              }
-              for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
-                aCouple = aCouples[nIdx].split(/\s*=\s*/);
-                if (aCouple.length > 1) {
-                  oStorage[iKey = unescape(aCouple[0])] = unescape(aCouple[1]);
-                  aKeys.push(iKey);
-                }
-              }
-              return oStorage;
-            };
-            this.configurable = false;
-            this.enumerable = true;
-          })());
-        }
-      }
-    },
-
-    // allows bind support
-    functionBind: function() {
-      // Credit to Douglas Crockford for this bind method
-      if (!Function.prototype.bind) {
-        Function.prototype.bind = function(oThis) {
-          if (typeof this !== "function") {
-            // closest thing possible to the ECMAScript 5 internal IsCallable function
-            throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-          }
-          var aArgs = Array.prototype.slice.call(arguments, 1),
-            fToBind = this,
-            fNOP = function() {},
-            fBound = function() {
-              return fToBind.apply(this instanceof fNOP && oThis ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
-            };
-          fNOP.prototype = this.prototype;
-          fBound.prototype = new fNOP();
-          return fBound;
-        };
-      }
-    }
-
-  };
-
-  // startup
-  useful.polyfills.html5();
-  useful.polyfills.arrayIndexOf();
-  useful.polyfills.arrayIsArray();
-  useful.polyfills.arrayMap();
-  useful.polyfills.querySelectorAll();
-  useful.polyfills.addEventListener();
-  useful.polyfills.consoleLog();
-  useful.polyfills.objectCreate();
-  useful.polyfills.stringTrim();
-  useful.polyfills.localStorage();
-  useful.polyfills.functionBind();
-
-  // return as a require.js module
-  if (typeof module !== 'undefined') {
-    exports = module.exports = useful.polyfills;
-  }
-
-})();
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.transitions.js: A library of useful functions to ease working with CSS3 transitions.", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// public object
-var useful = useful || {};
-
-(function(){
-
-	// Invoke strict mode
-	"use strict";
-
-	// Create a private object for this library
-	useful.transitions = {
-
-		// applies functionality to node that conform to a given CSS rule, or returns them
-		select : function (input, parent) {
-			var a, b, elements;
-			// validate the input
-			parent = parent || document;
-			input = (typeof input === 'string') ? {'rule' : input, 'parent' : parent} : input;
-			input.parent = input.parent || document;
-			input.data = input.data || {};
-			// use querySelectorAll to select elements, or defer to jQuery
-			elements = (typeof(document.querySelectorAll) !== 'undefined') ?
-				input.parent.querySelectorAll(input.rule) :
-				(typeof(jQuery) !== 'undefined') ? jQuery(input.parent).find(input.rule).get() : [];
-			// if there was a handler
-			if (typeof(input.handler) !== 'undefined') {
-				// for each element
-				for (a = 0, b = elements.length; a < b; a += 1) {
-					// run the handler and pass a unique copy of the data (in case it's a model)
-					input.handler(elements[a], input.data.create());
-				}
-			// else assume the function was called for a list of elements
-			} else {
-				// return the selected elements
-				return elements;
-			}
-		},
-
-		// checks the compatibility of CSS3 transitions for this browser
-		compatibility : function () {
-			var eventName, newDiv, empty;
-			// create a test div
-			newDiv = document.createElement('div');
-			// use various tests for transition support
-			if (typeof(newDiv.style.MozTransition) !== 'undefined') { eventName = 'transitionend'; }
-			try { document.createEvent('OTransitionEvent'); eventName = 'oTransitionEnd'; } catch (e) { empty = null; }
-			try { document.createEvent('WebKitTransitionEvent'); eventName = 'webkitTransitionEnd'; } catch (e) { empty = null; }
-			try { document.createEvent('transitionEvent'); eventName = 'transitionend'; } catch (e) { empty = null; }
-			// remove the test div
-			newDiv = empty;
-			// pass back working event name
-			return eventName;
-		},
-
-		// performs a transition between two classnames
-		byClass : function (element, removedClass, addedClass, endEventHandler, jQueryDuration, jQueryEasing) {
-			var replaceThis, replaceWith, endEventName, endEventFunction;
-			// validate the input
-			endEventHandler = endEventHandler || function () {};
-			endEventName = this.compatibility();
-			// turn the classnames into regular expressions
-			replaceThis = new RegExp(removedClass.trim().replace(/ {2,}/g, ' ').split(' ').join('|'), 'g');
-			replaceWith = new RegExp(addedClass, 'g');
-			// if CSS3 transitions are available
-			if (typeof endEventName !== 'undefined') {
-				// set the onComplete handler and immediately remove it afterwards
-				element.addEventListener(endEventName, endEventFunction = function () {
-					endEventHandler();
-					element.removeEventListener(endEventName, endEventFunction, true);
-				}, true);
-				// replace the class name
-				element.className = (element.className.replace(replaceThis, '') + ' ' + addedClass).replace(/ {2,}/g, ' ').trim();
-			// else if jQuery UI is available
-			} else if (typeof jQuery !== 'undefined' && typeof jQuery.ui !== 'undefined') {
-				// retrieve any extra information for jQuery
-				jQueryDuration = jQueryDuration || 500;
-				jQueryEasing = jQueryEasing || 'swing';
-				// use switchClass from jQuery UI to approximate CSS3 transitions
-				jQuery(element).switchClass(removedClass.replace(replaceWith, ''), addedClass, jQueryDuration, jQueryEasing, endEventHandler);
-			// if all else fails
-			} else {
-				// just replace the class name
-				element.className = (element.className.replace(replaceThis, '') + ' ' + addedClass).replace(/ {2,}/g, ' ').trim();
-				// and call the onComplete handler
-				endEventHandler();
-			}
-		},
-
-		// adds the relevant browser prefix to a style property
-		prefix : function (property) {
-			// pick the prefix that goes with the browser
-			return (navigator.userAgent.match(/webkit/gi)) ? 'webkit' + property.substr(0, 1).toUpperCase() + property.substr(1):
-				(navigator.userAgent.match(/firefox/gi)) ? 'Moz' + property.substr(0, 1).toUpperCase() + property.substr(1):
-				(navigator.userAgent.match(/microsoft/gi)) ? 'ms' + property.substr(0, 1).toUpperCase() + property.substr(1):
-				(navigator.userAgent.match(/opera/gi)) ? 'O' + property.substr(0, 1).toUpperCase() + property.substr(1):
-				property;
-		},
-
-		// applies a list of rules
-		byRules : function (element, rules, endEventHandler) {
-			var rule, endEventName, endEventFunction;
-			// validate the input
-			rules.transitionProperty = rules.transitionProperty || 'all';
-			rules.transitionDuration = rules.transitionDuration || '300ms';
-			rules.transitionTimingFunction = rules.transitionTimingFunction || 'ease';
-			endEventHandler = endEventHandler || function () {};
-			endEventName = this.compatibility();
-			// if CSS3 transitions are available
-			if (typeof endEventName !== 'undefined') {
-				// set the onComplete handler and immediately remove it afterwards
-				element.addEventListener(endEventName, endEventFunction = function () {
-					endEventHandler();
-					element.removeEventListener(endEventName, endEventFunction, true);
-				}, true);
-				// for all rules
-				for (rule in rules) {
-					if (rules.hasOwnProperty(rule)) {
-						// implement the prefixed value
-						element.style[this.compatibility(rule)] = rules[rule];
-						// implement the value
-						element.style[rule] = rules[rule];
-					}
-				}
-			// else if jQuery is available
-			} else if (typeof jQuery !== 'undefined') {
-				var jQueryEasing, jQueryDuration;
-				// pick the equivalent jQuery animation function
-				jQueryEasing = (rules.transitionTimingFunction.match(/ease/gi)) ? 'swing' : 'linear';
-				jQueryDuration = parseInt(rules.transitionDuration.replace(/s/g, '000').replace(/ms/g, ''), 10);
-				// remove rules that will make Internet Explorer complain
-				delete rules.transitionProperty;
-				delete rules.transitionDuration;
-				delete rules.transitionTimingFunction;
-				// use animate from jQuery
-				jQuery(element).animate(
-					rules,
-					jQueryDuration,
-					jQueryEasing,
-					endEventHandler
-				);
-			// else
-			} else {
-				// for all rules
-				for (rule in rules) {
-					if (rules.hasOwnProperty(rule)) {
-						// implement the prefixed value
-						element.style[this.compatibility(rule)] = rules[rule];
-						// implement the value
-						element.style[rule] = rules[rule];
-					}
-				}
-				// call the onComplete handler
-				endEventHandler();
-			}
-		}
-
-	};
-
-	// return as a require.js module
-	if (typeof module !== 'undefined') {
-		exports = module.exports = useful.transitions;
-	}
-
-})();
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Main = function (config, context) {
+// extend the class
+Catalog.prototype.Main = function (config, context) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
@@ -1272,14 +656,14 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / this.config.split;
 		this.element.style.height = (this.element.offsetWidth * this.aspect) + 'px';
 		// build the spread elementect
-		this.spread = new this.context.Spread(this);
+		this.spread = new context.Spread(this);
 		this.spread.split = this.config.split;
 		this.spread.open = this.config.open;
 		this.spread.start();
 		// build the toolbar elementect
-		this.toolbar = new this.context.Toolbar(this).init();
+		this.toolbar = new context.Toolbar(this);
 		// start the touch controls
-		this.touch = new this.context.Touch(this).init();
+		this.touch = new context.Touch(this);
 		// restore the aspect ratio after resizes
 		window.addEventListener('resize', this.onResized(), true);
 		// apply the custom styling
@@ -1323,30 +707,6 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.update();
 	};
 
-	// EVENTS
-
-	this.onResized = function () {
-		var context = this;
-		return function () {
-			// limit the redraw frequency
-			clearTimeout(context.timeout);
-			context.timeout = setTimeout(function () {
-				// adjust to the aspect ratio
-				context.element.style.height = (context.element.offsetWidth * context.aspect) + 'px';
-			}, context.config.delay);
-		};
-	};
-
-	this.onLoaded = function () {
-		var context = this;
-		return function () {
-			// apply the styling
-			context.styling();
-			// remove the loading indicator
-			context.element.className = context.element.className.replace(/ cat-busy/g, '');
-		};
-	};
-	// API calls
 	this.zoomBy = function (factor) {
 		// calculate the new factor
 		var newFactor = this.spread.magnification * factor;
@@ -1412,31 +772,51 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.open = number + number % this.spread.split;
 		this.spread.zoom(1);
 	};
+
+	// EVENTS
+
+	this.onResized = function () {
+		var context = this;
+		return function () {
+			// limit the redraw frequency
+			clearTimeout(context.timeout);
+			context.timeout = setTimeout(function () {
+				// adjust to the aspect ratio
+				context.element.style.height = (context.element.offsetWidth * context.aspect) + 'px';
+			}, context.config.delay);
+		};
+	};
+
+	this.onLoaded = function () {
+		var context = this;
+		return function () {
+			// apply the styling
+			context.styling();
+			// remove the loading indicator
+			context.element.className = context.element.className.replace(/ cat-busy/g, '');
+		};
+	};
+
+	// PUBLIC
+
+	context.zoomBy = this.zoomBy.bind(this);
+	context.zoomTo = this.zoomTo.bind(this);
+	context.moveBy = this.moveBy.bind(this);
+	context.moveTo = this.moveTo.bind(this);
+	context.pageBy = this.pageBy.bind(this);
+	context.pageTo = this.pageTo.bind(this);
+
+	// EXECUTE
+
+	this.init();
+
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Main;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Page = function (parent) {
+// extend the class
+Catalog.prototype.Page = function (parent) {
 
 	// PROPERTIES
-	
-	"use strict";
+
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -1451,14 +831,14 @@ useful.Catalog.prototype.Page = function (parent) {
 	this.preview = null;
 	this.index = null;
 	this.bound = null;
-	
+
 	// OBJECTS
-	
+
 	this.tiles = {};
 	this.tilesCount = 0;
 
 	// METHODS
-	
+
 	this.start = function () {
 		// build a container for the page
 		this.element = document.createElement('div');
@@ -1471,14 +851,14 @@ useful.Catalog.prototype.Page = function (parent) {
 		// add it to the parent
 		this.parent.element.appendChild(this.element);
 	};
-	
+
 	this.update = function () {
 		// generate new tiles
 		this.generate();
 		// redraw the existing tiles
 		this.redraw();
 	};
-	
+
 	this.generate = function () {
 		var col, row, left, top, right, bottom, width, height, name;
 		// get the visible area
@@ -1526,7 +906,7 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
-	
+
 	this.redraw = function () {
 		var name, min = this.parent.tilesCount - this.parent.parent.config.cache;
 		// for all existing tiles on this page
@@ -1545,19 +925,19 @@ useful.Catalog.prototype.Page = function (parent) {
 			}
 		}
 	};
-	
+
 	this.open = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-open cat-page-' + direction;
 		// update the page
 		this.update();
 	};
-	
+
 	this.close = function (direction) {
 		// change the class name
 		this.element.className = 'cat-page cat-page-' + this.bound + ' cat-page-close cat-page-' + direction;
 	};
-	
+
 	this.stay = function (direction) {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -1566,7 +946,7 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
-	
+
 	this.show = function () {
 		// allow the elementect to render
 		this.element.style.display = 'block';
@@ -1575,7 +955,7 @@ useful.Catalog.prototype.Page = function (parent) {
 		// update the page
 		this.update();
 	};
-	
+
 	this.hide = function () {
 		// if the elementect is nowhere near the open page, it's safe to stop it from rendering
 		this.element.style.display = (this.index > this.parent.open - 4 && this.index < this.parent.open + 4) ? 'block' : 'none';
@@ -1584,32 +964,14 @@ useful.Catalog.prototype.Page = function (parent) {
 	};
 
 	// EVENTS
-	
+
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Page;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Spread = function (parent) {
+// extend the class
+Catalog.prototype.Spread = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -1823,29 +1185,11 @@ useful.Catalog.prototype.Spread = function (parent) {
 	};
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Spread;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Tile = function (parent) {
+// extend the class
+Catalog.prototype.Tile = function (parent) {
 
 	// PROPERTIES
-	
-	"use strict";
+
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -1861,7 +1205,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 	this.index = null;
 
 	// METHODS
-	
+
 	this.start = function () {
 		// construct the tile
 		this.element = document.createElement('div');
@@ -1888,7 +1232,7 @@ useful.Catalog.prototype.Tile = function (parent) {
 		// add the tile to the page
 		this.parent.element.appendChild(this.element);
 	};
-	
+
 	this.update = function () {
 		var area = this.parent.parent.area[this.parent.bound],
 			magnification = this.parent.parent.magnification;
@@ -1901,36 +1245,18 @@ useful.Catalog.prototype.Tile = function (parent) {
 	};
 
 	// EVENTS
-	
+
 	this.onLoaded = function () {
 		var _this = this;
 		return function () { _this.img.style.visibility = 'visible'; };
 	};
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Tile;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Toolbar = function (parent) {
+// extend the class
+Catalog.prototype.Toolbar = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -1978,7 +1304,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.pageNumberInput.className = 'cat-pagenumber-input';
 		this.elements.pageNumberInput.setAttribute('type', 'number');
 		this.elements.pageNumberInput.setAttribute('name', 'cat-page');
-		this.elements.pageNumberInput.addEventListener('change', this.onNumberChange(this.elements.pageNumberInput));
+		this.elements.pageNumberInput.addEventListener('change', this.onNumberChange.bind(this, this.elements.pageNumberInput));
 		this.elements.pageNumber.appendChild(this.elements.pageNumberInput);
 		// add the total number of pages
 		this.elements.pageNumberTotal = document.createElement('span');
@@ -1994,16 +1320,16 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.nextButton.className = 'cat-page-next';
 		this.elements.nextButton.setAttribute('type', 'button');
 		this.elements.nextButton.innerHTML = 'Next page';
-		this.elements.nextButton.addEventListener('mousedown', this.onNextPage());
-		this.elements.nextButton.addEventListener('touchstart', this.onNextPage());
+		this.elements.nextButton.addEventListener('mousedown', this.onNextPage.bind(this));
+		this.elements.nextButton.addEventListener('touchstart', this.onNextPage.bind(this));
 		this.menu.appendChild(this.elements.nextButton);
 		// add the "next page" button
 		this.elements.prevButton = document.createElement('button');
 		this.elements.prevButton.className = 'cat-page-prev';
 		this.elements.prevButton.setAttribute('type', 'button');
 		this.elements.prevButton.innerHTML = 'Previous page';
-		this.elements.prevButton.addEventListener('mousedown', this.onPrevPage());
-		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage());
+		this.elements.prevButton.addEventListener('mousedown', this.onPrevPage.bind(this));
+		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage.bind(this));
 		this.menu.appendChild(this.elements.prevButton);
 	};
 
@@ -2013,131 +1339,103 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomInButton.className = 'cat-zoom-in';
 		this.elements.zoomInButton.setAttribute('type', 'button');
 		this.elements.zoomInButton.innerHTML = 'Zoom in';
-		this.elements.zoomInButton.addEventListener('mousedown', this.onZoomIn());
-		this.elements.zoomInButton.addEventListener('mouseup', this.onZoomInEnd());
-		this.elements.zoomInButton.addEventListener('touchstart', this.onZoomIn());
-		this.elements.zoomInButton.addEventListener('touchend', this.onZoomInEnd());
+		this.elements.zoomInButton.addEventListener('mousedown', this.onZoomIn.bind(this));
+		this.elements.zoomInButton.addEventListener('mouseup', this.onZoomInEnd.bind(this));
+		this.elements.zoomInButton.addEventListener('touchstart', this.onZoomIn.bind(this));
+		this.elements.zoomInButton.addEventListener('touchend', this.onZoomInEnd.bind(this));
 		this.menu.appendChild(this.elements.zoomInButton);
 		// add the "zoom out" button
 		this.elements.zoomOutButton = document.createElement('button');
 		this.elements.zoomOutButton.className = 'cat-zoom-out';
 		this.elements.zoomOutButton.setAttribute('type', 'button');
 		this.elements.zoomOutButton.innerHTML = 'Zoom out';
-		this.elements.zoomOutButton.addEventListener('mousedown', this.onZoomOut());
-		this.elements.zoomOutButton.addEventListener('mouseup', this.onZoomOutEnd());
-		this.elements.zoomOutButton.addEventListener('touchstart', this.onZoomOut());
-		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd());
+		this.elements.zoomOutButton.addEventListener('mousedown', this.onZoomOut.bind(this));
+		this.elements.zoomOutButton.addEventListener('mouseup', this.onZoomOutEnd.bind(this));
+		this.elements.zoomOutButton.addEventListener('touchstart', this.onZoomOut.bind(this));
+		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd.bind(this));
 		this.menu.appendChild(this.elements.zoomOutButton);
 	};
 
 	// EVENTS
 
 	this.onNumberChange = function (input) {
-		var _this = this;
-		return function () {
-			// if the input is a number
-			var number = parseInt(input.value, 10);
-			if (isNaN(number)) {
-				// redraw the elements
-				_this.update();
-			// else
-			} else {
-				// change the page count
-				_this.parent.pageTo(number - 1);
-			}
-		};
+		// if the input is a number
+		var number = parseInt(input.value, 10);
+		if (isNaN(number)) {
+			// redraw the elements
+			this.update();
+		// else
+		} else {
+			// change the page count
+			this.parent.pageTo(number - 1);
+		}
 	};
 
 	this.onNextPage = function () {
-		var _this = this;
-		return function (event) {
-			// increase the page count
-			_this.parent.pageBy(1);
-			// cancel the click
-			event.preventDefault();
-		};
+		// increase the page count
+		this.parent.pageBy(1);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onPrevPage = function () {
-		var _this = this;
-		return function (event) {
-			// increase the page count
-			_this.parent.pageBy(-1);
-			// cancel the click
-			event.preventDefault();
-		};
+		// increase the page count
+		this.parent.pageBy(-1);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomIn = function () {
 		var _this = this;
-		return function (event) {
-			// repeat the action (faster than the redraw delay)
-			_this.zoomInRepeat = setInterval(function () {
-				// increase the zoom factor
-				_this.parent.zoomBy(1.1);
-			}, Math.round(_this.parent.config.delay * 0.75));
-			// cancel the click
-			event.preventDefault();
-		};
+		// repeat the action (faster than the redraw delay)
+		this.zoomInRepeat = setInterval(function () {
+			// increase the zoom factor
+			_this.parent.zoomBy(1.1);
+			// redraw the toolbar
+			_this.update();
+		}, Math.round(_this.parent.config.delay * 0.75));
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomInEnd = function () {
-		var _this = this;
-		return function (event) {
-			// cancel the repeat
-			clearInterval(_this.zoomInRepeat);
-			// cancel the click
-			event.preventDefault();
-		};
+		// cancel the repeat
+		clearInterval(this.zoomInRepeat);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomOut = function () {
 		var _this = this;
-		return function (event) {
-			// repeat the action (faster than the redraw delay)
-			_this.zoomOutRepeat = setInterval(function () {
-				// decrease the zoom factor
-				_this.parent.zoomBy(0.9);
-			}, Math.round(_this.parent.config.delay * 0.75));
-			// cancel the click
-			event.preventDefault();
-		};
+		// repeat the action (faster than the redraw delay)
+		this.zoomOutRepeat = setInterval(function () {
+			// decrease the zoom factor
+			_this.parent.zoomBy(0.9);
+			// redraw the toolbar
+			_this.update();
+		}, Math.round(_this.parent.config.delay * 0.75));
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomOutEnd = function () {
-		var _this = this;
-		return function (event) {
-			// cancel the repeat
-			clearInterval(_this.zoomOutRepeat);
-			// cancel the click
-			event.preventDefault();
-		};
+		// cancel the repeat
+		clearInterval(this.zoomOutRepeat);
+		// cancel the click
+		event.preventDefault();
 	};
+
+	// EXECUTE
+
+	this.init();
+
 };
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Toolbar;
-}
-
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Touch = function (parent) {
+// extend the class
+Catalog.prototype.Touch = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -2148,7 +1446,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 
 	this.init = function () {
 		// start touch controls
-		this.gestures = new useful.Gestures().init({
+		this.gestures = new Gestures({
 			'element' : this.parent.element,
 			'threshold' : 100,
 			'increment' : 0.1,
@@ -2206,63 +1504,9 @@ useful.Catalog.prototype.Touch = function (parent) {
 			_this.parent.zoomBy(1 + metrics.scale);
 		};
 	};
-};
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Touch;
-}
+	// EXECUTE
 
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.init = function (config) {
-
-	// PROPERTIES
-
-	"use strict";
-
-	// METHODS
-
-	this.only = function (config) {
-		// start an instance of the script
-		return new this.Main(config, this).init();
-	};
-
-	this.each = function (config) {
-		var _config, _context = this, instances = [];
-		// for all element
-		for (var a = 0, b = config.elements.length; a < b; a += 1) {
-			// clone the configuration
-			_config = Object.create(config);
-			// insert the current element
-			_config.element = config.elements[a];
-			// delete the list of elements from the clone
-			delete _config.elements;
-			// start a new instance of the object
-			instances[a] = new this.Main(_config, _context).init();
-		}
-		// return the instances
-		return instances;
-	};
-
-	// START
-
-	return (config.elements) ? this.each(config) : this.only(config);
+	this.init();
 
 };
-
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog;
-}

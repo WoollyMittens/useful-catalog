@@ -1,4 +1,4 @@
-# useful.catalog.js: Scanned Print Media Viewer
+# catalog.js: Scanned Print Media Viewer
 
 A viewer for browsing through and zooming in on magazine pages.
 
@@ -9,27 +9,19 @@ Try the <a href="http://www.woollymittens.nl/default.php?url=useful-catalog">dem
 The stylesheet is best included in the header of the document.
 
 ```html
-<link rel="stylesheet" href="./css/useful-catalog.css"/>
+<link rel="stylesheet" href="./css/catalog.css"/>
 ```
 
 This include can be added to the header or placed inline before the script is invoked.
 
 ```html
-<script src="./js/useful-catalog.js"></script>
-```
-
-To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5.js*.
-
-```html
-<!--[if lte IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
+<script src="./js/catalog.js"></script>
 ```
 
 ## How to start the script
 
 ```javascript
-var catalog = new useful.Catalog().init({
+var catalog = new Catalog({
 	'element' : document.getElementById('catalogExample'),
 	'imageslice' : 'php/imageslice.php?src=../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
 	'cache' : 256,

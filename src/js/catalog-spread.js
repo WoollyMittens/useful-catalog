@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Spread = function (parent) {
+// extend the class
+Catalog.prototype.Spread = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -228,8 +215,3 @@ useful.Catalog.prototype.Spread = function (parent) {
 		};
 	};
 };
-
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Spread;
-}

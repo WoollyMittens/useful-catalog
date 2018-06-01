@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Toolbar = function (parent) {
+// extend the class
+Catalog.prototype.Toolbar = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -63,7 +50,7 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.pageNumberInput.className = 'cat-pagenumber-input';
 		this.elements.pageNumberInput.setAttribute('type', 'number');
 		this.elements.pageNumberInput.setAttribute('name', 'cat-page');
-		this.elements.pageNumberInput.addEventListener('change', this.onNumberChange(this.elements.pageNumberInput));
+		this.elements.pageNumberInput.addEventListener('change', this.onNumberChange.bind(this, this.elements.pageNumberInput));
 		this.elements.pageNumber.appendChild(this.elements.pageNumberInput);
 		// add the total number of pages
 		this.elements.pageNumberTotal = document.createElement('span');
@@ -79,16 +66,16 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.nextButton.className = 'cat-page-next';
 		this.elements.nextButton.setAttribute('type', 'button');
 		this.elements.nextButton.innerHTML = 'Next page';
-		this.elements.nextButton.addEventListener('mousedown', this.onNextPage());
-		this.elements.nextButton.addEventListener('touchstart', this.onNextPage());
+		this.elements.nextButton.addEventListener('mousedown', this.onNextPage.bind(this));
+		this.elements.nextButton.addEventListener('touchstart', this.onNextPage.bind(this));
 		this.menu.appendChild(this.elements.nextButton);
 		// add the "next page" button
 		this.elements.prevButton = document.createElement('button');
 		this.elements.prevButton.className = 'cat-page-prev';
 		this.elements.prevButton.setAttribute('type', 'button');
 		this.elements.prevButton.innerHTML = 'Previous page';
-		this.elements.prevButton.addEventListener('mousedown', this.onPrevPage());
-		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage());
+		this.elements.prevButton.addEventListener('mousedown', this.onPrevPage.bind(this));
+		this.elements.prevButton.addEventListener('touchstart', this.onPrevPage.bind(this));
 		this.menu.appendChild(this.elements.prevButton);
 	};
 
@@ -98,109 +85,94 @@ useful.Catalog.prototype.Toolbar = function (parent) {
 		this.elements.zoomInButton.className = 'cat-zoom-in';
 		this.elements.zoomInButton.setAttribute('type', 'button');
 		this.elements.zoomInButton.innerHTML = 'Zoom in';
-		this.elements.zoomInButton.addEventListener('mousedown', this.onZoomIn());
-		this.elements.zoomInButton.addEventListener('mouseup', this.onZoomInEnd());
-		this.elements.zoomInButton.addEventListener('touchstart', this.onZoomIn());
-		this.elements.zoomInButton.addEventListener('touchend', this.onZoomInEnd());
+		this.elements.zoomInButton.addEventListener('mousedown', this.onZoomIn.bind(this));
+		this.elements.zoomInButton.addEventListener('mouseup', this.onZoomInEnd.bind(this));
+		this.elements.zoomInButton.addEventListener('touchstart', this.onZoomIn.bind(this));
+		this.elements.zoomInButton.addEventListener('touchend', this.onZoomInEnd.bind(this));
 		this.menu.appendChild(this.elements.zoomInButton);
 		// add the "zoom out" button
 		this.elements.zoomOutButton = document.createElement('button');
 		this.elements.zoomOutButton.className = 'cat-zoom-out';
 		this.elements.zoomOutButton.setAttribute('type', 'button');
 		this.elements.zoomOutButton.innerHTML = 'Zoom out';
-		this.elements.zoomOutButton.addEventListener('mousedown', this.onZoomOut());
-		this.elements.zoomOutButton.addEventListener('mouseup', this.onZoomOutEnd());
-		this.elements.zoomOutButton.addEventListener('touchstart', this.onZoomOut());
-		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd());
+		this.elements.zoomOutButton.addEventListener('mousedown', this.onZoomOut.bind(this));
+		this.elements.zoomOutButton.addEventListener('mouseup', this.onZoomOutEnd.bind(this));
+		this.elements.zoomOutButton.addEventListener('touchstart', this.onZoomOut.bind(this));
+		this.elements.zoomOutButton.addEventListener('touchend', this.onZoomOutEnd.bind(this));
 		this.menu.appendChild(this.elements.zoomOutButton);
 	};
 
 	// EVENTS
 
 	this.onNumberChange = function (input) {
-		var _this = this;
-		return function () {
-			// if the input is a number
-			var number = parseInt(input.value, 10);
-			if (isNaN(number)) {
-				// redraw the elements
-				_this.update();
-			// else
-			} else {
-				// change the page count
-				_this.parent.pageTo(number - 1);
-			}
-		};
+		// if the input is a number
+		var number = parseInt(input.value, 10);
+		if (isNaN(number)) {
+			// redraw the elements
+			this.update();
+		// else
+		} else {
+			// change the page count
+			this.parent.pageTo(number - 1);
+		}
 	};
 
 	this.onNextPage = function () {
-		var _this = this;
-		return function (event) {
-			// increase the page count
-			_this.parent.pageBy(1);
-			// cancel the click
-			event.preventDefault();
-		};
+		// increase the page count
+		this.parent.pageBy(1);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onPrevPage = function () {
-		var _this = this;
-		return function (event) {
-			// increase the page count
-			_this.parent.pageBy(-1);
-			// cancel the click
-			event.preventDefault();
-		};
+		// increase the page count
+		this.parent.pageBy(-1);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomIn = function () {
 		var _this = this;
-		return function (event) {
-			// repeat the action (faster than the redraw delay)
-			_this.zoomInRepeat = setInterval(function () {
-				// increase the zoom factor
-				_this.parent.zoomBy(1.1);
-			}, Math.round(_this.parent.config.delay * 0.75));
-			// cancel the click
-			event.preventDefault();
-		};
+		// repeat the action (faster than the redraw delay)
+		this.zoomInRepeat = setInterval(function () {
+			// increase the zoom factor
+			_this.parent.zoomBy(1.1);
+			// redraw the toolbar
+			_this.update();
+		}, Math.round(_this.parent.config.delay * 0.75));
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomInEnd = function () {
-		var _this = this;
-		return function (event) {
-			// cancel the repeat
-			clearInterval(_this.zoomInRepeat);
-			// cancel the click
-			event.preventDefault();
-		};
+		// cancel the repeat
+		clearInterval(this.zoomInRepeat);
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomOut = function () {
 		var _this = this;
-		return function (event) {
-			// repeat the action (faster than the redraw delay)
-			_this.zoomOutRepeat = setInterval(function () {
-				// decrease the zoom factor
-				_this.parent.zoomBy(0.9);
-			}, Math.round(_this.parent.config.delay * 0.75));
-			// cancel the click
-			event.preventDefault();
-		};
+		// repeat the action (faster than the redraw delay)
+		this.zoomOutRepeat = setInterval(function () {
+			// decrease the zoom factor
+			_this.parent.zoomBy(0.9);
+			// redraw the toolbar
+			_this.update();
+		}, Math.round(_this.parent.config.delay * 0.75));
+		// cancel the click
+		event.preventDefault();
 	};
 
 	this.onZoomOutEnd = function () {
-		var _this = this;
-		return function (event) {
-			// cancel the repeat
-			clearInterval(_this.zoomOutRepeat);
-			// cancel the click
-			event.preventDefault();
-		};
+		// cancel the repeat
+		clearInterval(this.zoomOutRepeat);
+		// cancel the click
+		event.preventDefault();
 	};
-};
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Toolbar;
-}
+	// EXECUTE
+
+	this.init();
+
+};

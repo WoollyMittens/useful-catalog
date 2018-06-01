@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Main = function (config, context) {
+// extend the class
+Catalog.prototype.Main = function (config, context) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
@@ -38,14 +25,14 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.aspect = parseInt(reference.getAttribute('data-height'), 10) / parseInt(reference.getAttribute('data-width'), 10) / this.config.split;
 		this.element.style.height = (this.element.offsetWidth * this.aspect) + 'px';
 		// build the spread elementect
-		this.spread = new this.context.Spread(this);
+		this.spread = new context.Spread(this);
 		this.spread.split = this.config.split;
 		this.spread.open = this.config.open;
 		this.spread.start();
 		// build the toolbar elementect
-		this.toolbar = new this.context.Toolbar(this).init();
+		this.toolbar = new context.Toolbar(this);
 		// start the touch controls
-		this.touch = new this.context.Touch(this).init();
+		this.touch = new context.Touch(this);
 		// restore the aspect ratio after resizes
 		window.addEventListener('resize', this.onResized(), true);
 		// apply the custom styling
@@ -89,30 +76,6 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.update();
 	};
 
-	// EVENTS
-
-	this.onResized = function () {
-		var context = this;
-		return function () {
-			// limit the redraw frequency
-			clearTimeout(context.timeout);
-			context.timeout = setTimeout(function () {
-				// adjust to the aspect ratio
-				context.element.style.height = (context.element.offsetWidth * context.aspect) + 'px';
-			}, context.config.delay);
-		};
-	};
-
-	this.onLoaded = function () {
-		var context = this;
-		return function () {
-			// apply the styling
-			context.styling();
-			// remove the loading indicator
-			context.element.className = context.element.className.replace(/ cat-busy/g, '');
-		};
-	};
-	// API calls
 	this.zoomBy = function (factor) {
 		// calculate the new factor
 		var newFactor = this.spread.magnification * factor;
@@ -178,9 +141,42 @@ useful.Catalog.prototype.Main = function (config, context) {
 		this.spread.open = number + number % this.spread.split;
 		this.spread.zoom(1);
 	};
-};
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Main;
-}
+	// EVENTS
+
+	this.onResized = function () {
+		var context = this;
+		return function () {
+			// limit the redraw frequency
+			clearTimeout(context.timeout);
+			context.timeout = setTimeout(function () {
+				// adjust to the aspect ratio
+				context.element.style.height = (context.element.offsetWidth * context.aspect) + 'px';
+			}, context.config.delay);
+		};
+	};
+
+	this.onLoaded = function () {
+		var context = this;
+		return function () {
+			// apply the styling
+			context.styling();
+			// remove the loading indicator
+			context.element.className = context.element.className.replace(/ cat-busy/g, '');
+		};
+	};
+
+	// PUBLIC
+
+	context.zoomBy = this.zoomBy.bind(this);
+	context.zoomTo = this.zoomTo.bind(this);
+	context.moveBy = this.moveBy.bind(this);
+	context.moveTo = this.moveTo.bind(this);
+	context.pageBy = this.pageBy.bind(this);
+	context.pageTo = this.pageTo.bind(this);
+
+	// EXECUTE
+
+	this.init();
+
+};

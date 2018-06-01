@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.catalog.js: Scanned Print Media Viewer", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Catalog = useful.Catalog || function () {};
-
-// extend the constructor
-useful.Catalog.prototype.Touch = function (parent) {
+// extend the class
+Catalog.prototype.Touch = function (parent) {
 
 	// PROPERTIES
 
-	"use strict";
 	this.parent = parent;
 	this.config = parent.config;
 	this.context = parent.context;
@@ -26,7 +13,7 @@ useful.Catalog.prototype.Touch = function (parent) {
 
 	this.init = function () {
 		// start touch controls
-		this.gestures = new useful.Gestures().init({
+		this.gestures = new Gestures({
 			'element' : this.parent.element,
 			'threshold' : 100,
 			'increment' : 0.1,
@@ -84,9 +71,9 @@ useful.Catalog.prototype.Touch = function (parent) {
 			_this.parent.zoomBy(1 + metrics.scale);
 		};
 	};
-};
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Catalog.Touch;
-}
+	// EXECUTE
+
+	this.init();
+
+};
