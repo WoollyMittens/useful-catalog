@@ -592,10 +592,6 @@ Gestures.prototype.Single = function (parent) {
 // establish the class
 var Catalog = function (config) {
 
-	// PROPERTIES
-
-	// METHODS
-
 	this.only = function (config) {
 		// start an instance of the script
 		return new this.Main(config, this);
@@ -609,16 +605,12 @@ var Catalog = function (config) {
 			_config = Object.create(config);
 			// insert the current element
 			_config.element = config.elements[a];
-			// delete the list of elements from the clone
-			delete _config.elements;
 			// start a new instance of the object
 			instances[a] = new this.Main(_config, _context);
 		}
 		// return the instances
 		return instances;
 	};
-
-	// START
 
 	return (config.elements) ? this.each(config) : this.only(config);
 
