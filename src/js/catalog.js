@@ -34,5 +34,5 @@ var Catalog = function (config) {
 };
 
 // return as a require.js module
-if (typeof define != 'undefined') define(['catalog'], function () { return Catalog });
+if (typeof define != 'undefined') define([], function () { return Catalog });
 if (typeof module != 'undefined') module.exports = Catalog;
