@@ -42,7 +42,7 @@ var Catalog = require('js/catalog.js');
 ```javascript
 var catalog = new Catalog({
 	'element' : document.getElementById('catalogExample'),
-	'imageslice' : 'php/imageslice.php?src=../{src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
+	'imageslice' : 'php/imageslice.php?src={src}&width={width}&height={height}&left={left}&top={top}&right={right}&bottom={bottom}',
 	'cache' : 256,
 	'delay' : 100,
 	'duration' : 1600,
